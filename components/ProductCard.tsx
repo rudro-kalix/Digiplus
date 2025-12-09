@@ -1,13 +1,13 @@
 import React from 'react';
 import { Product } from '../types';
-import { Check, ShoppingCart, User } from 'lucide-react';
+import { Check, Zap, User } from 'lucide-react';
 
 interface ProductCardProps {
   product: Product;
-  onAddToCart: (product: Product) => void;
+  onBuyNow: (product: Product) => void;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ product, onBuyNow }) => {
   return (
     <div className={`relative bg-slate-800 rounded-2xl p-6 border ${product.popular ? 'border-blue-500 shadow-blue-500/10' : 'border-slate-700'} shadow-xl hover:transform hover:-translate-y-1 transition-all duration-300 flex flex-col`}>
       {product.popular && (
@@ -43,14 +43,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }
       </ul>
 
       <button
-        onClick={() => onAddToCart(product)}
-        className={`w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all duration-200 
+        onClick={() => onBuyNow(product)}
+        className={`w-full py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-200 
           ${product.popular 
             ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-900/20' 
             : 'bg-slate-700 hover:bg-slate-600 text-white'}`}
       >
-        <ShoppingCart size={18} />
-        কার্টে যোগ করুন
+        <Zap size={18} />
+        এখনই কিনুন
       </button>
     </div>
   );

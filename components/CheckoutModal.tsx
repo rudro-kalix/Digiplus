@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { CartItem } from '../types';
+import { Product } from '../types';
 import { CheckCircle2, Lock, Loader2, Mail, Smartphone } from 'lucide-react';
 
 interface CheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
-  cartItems: CartItem[];
+  product: Product | null;
   onSuccess: () => void;
 }
 
@@ -14,7 +14,7 @@ type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay';
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({ 
   isOpen, 
   onClose, 
-  cartItems,
+  product,
   onSuccess
 }) => {
   const [step, setStep] = useState<'details' | 'processing' | 'success'>('details');
@@ -23,7 +23,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [senderNumber, setSenderNumber] = useState('');
   const [trxId, setTrxId] = useState('');
   
-  const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const total = product ? product.price : 0;
 
   const handlePay = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +42,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     }, 2000);
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !product) return null;
 
   const methods: { id: PaymentMethod; name: string; color: string }[] = [
     { id: 'bkash', name: 'বিকাশ', color: 'bg-pink-600 hover:bg-pink-500' },
@@ -66,7 +66,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
                 <div className="flex justify-between text-sm text-slate-400 mb-2">
                   <span>অর্ডার সারাংশ</span>
-                  <span>{cartItems.length} টি আইটেম</span>
+                  <span className="text-blue-400 font-medium">{product.name}</span>
                 </div>
                 <div className="text-2xl font-bold text-white">৳{total.toLocaleString('bn-BD')}</div>
               </div>

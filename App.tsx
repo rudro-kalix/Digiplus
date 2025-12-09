@@ -1,41 +1,24 @@
 import React, { useState } from 'react';
 import { PRODUCTS } from './constants';
 import { ProductCard } from './components/ProductCard';
-import { CartDrawer } from './components/CartDrawer';
 import { CheckoutModal } from './components/CheckoutModal';
 import { SupportBot } from './components/SupportBot';
-import { CartItem, Product } from './types';
-import { ShoppingBag, Star, Zap, ShieldCheck } from 'lucide-react';
+import { Product } from './types';
+import { Star, Zap, ShieldCheck } from 'lucide-react';
 
 const App: React.FC = () => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
-  const addToCart = (product: Product) => {
-    setCartItems(prev => {
-      const existing = prev.find(item => item.id === product.id);
-      if (existing) {
-        return prev.map(item => 
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-        );
-      }
-      return [...prev, { ...product, quantity: 1 }];
-    });
-    setIsCartOpen(true);
-  };
-
-  const removeFromCart = (id: string) => {
-    setCartItems(prev => prev.filter(item => item.id !== id));
+  const handleBuyNow = (product: Product) => {
+    setSelectedProduct(product);
+    setIsCheckoutOpen(true);
   };
 
   const handleCheckoutSuccess = () => {
-    setCartItems([]);
+    setSelectedProduct(null);
     setIsCheckoutOpen(false);
-    setIsCartOpen(false);
   };
-
-  const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <div className="min-h-screen flex flex-col font-[inherit]">
@@ -47,20 +30,6 @@ const App: React.FC = () => {
               ডি
             </div>
             <span className="text-xl font-bold text-white tracking-tight">ডিজিসাব</span>
-          </div>
-
-          <div className="flex items-center gap-6">
-            <button 
-              onClick={() => setIsCartOpen(true)}
-              className="relative p-2 text-slate-400 hover:text-white transition-colors"
-            >
-              <ShoppingBag size={24} />
-              {cartCount > 0 && (
-                <span className="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full animate-bounce">
-                  {cartCount}
-                </span>
-              )}
-            </button>
           </div>
         </div>
       </nav>
@@ -100,7 +69,7 @@ const App: React.FC = () => {
                 <ProductCard 
                   key={product.id} 
                   product={product} 
-                  onAddToCart={addToCart} 
+                  onBuyNow={handleBuyNow} 
                 />
               ))}
             </div>
@@ -149,22 +118,10 @@ const App: React.FC = () => {
         </div>
       </footer>
 
-      {/* Overlays */}
-      <CartDrawer 
-        isOpen={isCartOpen} 
-        onClose={() => setIsCartOpen(false)} 
-        cartItems={cartItems}
-        onRemove={removeFromCart}
-        onCheckout={() => {
-          setIsCartOpen(false);
-          setIsCheckoutOpen(true);
-        }}
-      />
-
       <CheckoutModal 
         isOpen={isCheckoutOpen} 
         onClose={() => setIsCheckoutOpen(false)}
-        cartItems={cartItems}
+        product={selectedProduct}
         onSuccess={handleCheckoutSuccess}
       />
 
