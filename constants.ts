@@ -3,34 +3,37 @@ import { Product } from './types';
 export const PRODUCTS: Product[] = [
   {
     id: 'monthly-plus',
-    name: 'ChatGPT Plus',
-    description: 'Perfect for short-term projects and trying out advanced features.',
-    price: 25.00,
-    duration: '1 Month',
+    name: 'চ্যাটজিপিটি প্লাস',
+    description: 'স্বল্পমেয়াদী প্রজেক্ট এবং ব্যক্তিগত ব্যবহারের জন্য সেরা।',
+    price: 1500, // Adjusted for local context BDT
+    duration: '১ মাস',
     image: '⚡',
     features: [
-      'Access to GPT-4',
-      'Faster response times',
-      'Exclusive access to beta features',
-      'Priority server access',
-      'Instant Email Delivery'
+      'সম্পূর্ণ ব্যক্তিগত অ্যাকাউন্ট (Personal)',
+      'GPT-4 এর পূর্ণ এক্সেস',
+      'দ্রুত রেসপন্স টাইম',
+      'নতুন ফিচারে অগ্রাধিকার',
+      'ইমেইলে ইনস্ট্যান্ট ডেলিভারি'
     ]
   },
   {
     id: 'yearly-go',
-    name: 'ChatGPT Go',
-    description: 'The ultimate power-user package for serious productivity.',
-    price: 200.00,
-    duration: '1 Year',
+    name: 'ChatGPT GO',
+    description: 'দীর্ঘমেয়াদী ব্যবহারের জন্য সাশ্রয়ী সেরা প্যাকেজ।',
+    price: 12000, // Adjusted for local context BDT
+    duration: '১ বছর',
     image: '🚀',
     popular: true,
     features: [
-      'Everything in Plus',
-      'Save $100 annually',
-      '1 Year valid warranty',
-      'Dedicated support line',
-      'Bulk query processing',
-      'Instant Email Delivery'
+      '১০০% ব্যক্তিগত অ্যাকাউন্ট (Personal)',
+      'বার্ষিক ৩০০০ টাকা সাশ্রয়',
+      '✅ আর অনেক বেশী File Upload',
+'✅ Fast Images Generation',
+'✅ Unlimited Prompt',
+'✅ Full Access GPT-5.1',
+'✅ Voice Mode ',
+'✅ 12 Month Official Subscription',
+
     ]
   }
 ];

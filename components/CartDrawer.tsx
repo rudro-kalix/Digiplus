@@ -36,7 +36,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
           <div className="p-5 border-b border-slate-800 flex justify-between items-center">
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               <ShoppingBag className="text-blue-500" />
-              Your Cart
+              আপনার কার্ট
             </h2>
             <button onClick={onClose} className="p-2 hover:bg-slate-800 rounded-full text-slate-400 hover:text-white transition-colors">
               <X size={20} />
@@ -48,9 +48,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
             {cartItems.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-slate-500 gap-4">
                 <ShoppingBag size={48} className="opacity-20" />
-                <p>Your cart is empty</p>
+                <p>আপনার কার্ট খালি</p>
                 <button onClick={onClose} className="text-blue-400 hover:text-blue-300 text-sm font-medium">
-                  Browse Products
+                  পণ্য দেখুন
                 </button>
               </div>
             ) : (
@@ -61,7 +61,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   </div>
                   <div className="flex-1">
                     <h4 className="text-white font-medium">{item.name}</h4>
-                    <p className="text-slate-400 text-sm">${item.price} x {item.quantity}</p>
+                    <p className="text-slate-400 text-sm">৳{item.price.toLocaleString('bn-BD')} x {item.quantity}</p>
                   </div>
                   <button 
                     onClick={() => onRemove(item.id)}
@@ -78,14 +78,14 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
           {cartItems.length > 0 && (
             <div className="p-6 bg-slate-900 border-t border-slate-800">
               <div className="flex justify-between items-center mb-6">
-                <span className="text-slate-400">Total</span>
-                <span className="text-2xl font-bold text-white">${total.toFixed(2)}</span>
+                <span className="text-slate-400">সর্বমোট</span>
+                <span className="text-2xl font-bold text-white">৳{total.toLocaleString('bn-BD')}</span>
               </div>
               <button 
                 onClick={onCheckout}
                 className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all hover:shadow-lg hover:shadow-blue-500/20"
               >
-                Proceed to Checkout
+                চেকআউট করুন
                 <ArrowRight size={18} />
               </button>
             </div>

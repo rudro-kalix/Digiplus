@@ -1,6 +1,6 @@
 import React from 'react';
 import { Product } from '../types';
-import { Check, ShoppingCart, Zap } from 'lucide-react';
+import { Check, ShoppingCart, User } from 'lucide-react';
 
 interface ProductCardProps {
   product: Product;
@@ -12,7 +12,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }
     <div className={`relative bg-slate-800 rounded-2xl p-6 border ${product.popular ? 'border-blue-500 shadow-blue-500/10' : 'border-slate-700'} shadow-xl hover:transform hover:-translate-y-1 transition-all duration-300 flex flex-col`}>
       {product.popular && (
         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white text-xs font-bold px-4 py-1 rounded-full uppercase tracking-wider shadow-lg">
-          Best Value
+          সেরা অফার
         </div>
       )}
       
@@ -20,8 +20,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }
         <div className="text-6xl mb-4">{product.image}</div>
         <h3 className="text-2xl font-bold text-white mb-2">{product.name}</h3>
         <p className="text-slate-400 text-sm mb-4">{product.description}</p>
+        
+        {/* Highlight Personal Account */}
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold mb-4 border border-indigo-500/30">
+            <User size={12} />
+            ব্যক্তিগত অ্যাকাউন্ট
+        </div>
+
         <div className="flex justify-center items-baseline gap-1">
-          <span className="text-4xl font-bold text-white">${product.price}</span>
+          <span className="text-4xl font-bold text-white">৳{product.price.toLocaleString('bn-BD')}</span>
           <span className="text-slate-500">/{product.duration}</span>
         </div>
       </div>
@@ -43,7 +50,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }
             : 'bg-slate-700 hover:bg-slate-600 text-white'}`}
       >
         <ShoppingCart size={18} />
-        Add to Cart
+        কার্টে যোগ করুন
       </button>
     </div>
   );

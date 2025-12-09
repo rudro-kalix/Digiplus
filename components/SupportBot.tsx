@@ -6,7 +6,7 @@ import { MessageCircle, X, Send, Loader2 } from 'lucide-react';
 export const SupportBot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'model', text: 'Hi! I can help you with questions about our ChatGPT subscriptions. Ask away!' }
+    { role: 'model', text: 'হ্যালো! চ্যাটজিপিটি সাবস্ক্রিপশন নিয়ে কোনো প্রশ্ন থাকলে আমাকে করতে পারেন।' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -31,37 +31,28 @@ export const SupportBot: React.FC = () => {
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const systemInstruction = `
-        You are a friendly and professional customer support agent for "DigiSub", a digital store selling ChatGPT subscriptions.
+        You are a friendly and professional customer support agent for "DigiSub", a digital store selling ChatGPT subscriptions in Bangladesh.
         
+        IMPORTANT: Reply in Bengali (Bangla) only.
+
         Products we sell:
-        1. ChatGPT Plus (1 Month) - $25. Instant delivery via email.
-        2. ChatGPT Go (1 Year) - $200. Long-term value, instant activation.
+        1. ChatGPT Plus (1 Month) - 1500 Taka. Instant delivery via email. Personal Account.
+        2. ChatGPT Go (1 Year) - 12000 Taka. Long-term value, instant activation. Personal Account.
 
         Store Policies:
         - Delivery: Instant digital code sent to email after purchase.
+        - Payment Methods: bKash, Nagad, Rocket, Upay.
         - Refund: 7-day money-back guarantee if the code is unused.
         - Support: 24/7 active support.
         
-        Keep answers concise (under 50 words) and helpful. If asked about technical issues with OpenAI, direct them to OpenAI support.
-        Focus on selling the convenience of buying from us.
+        Keep answers concise (under 50 words) and helpful. 
+        Focus on selling the convenience of buying from us locally in BDT.
       `;
-
-      // Use a fresh chat history for context, mapped from our state
-      // Note: In a real app, you'd maintain the history object properly.
-      // Here we just send the current query with system instruction context for simplicity or maintain a session.
-      // We will use generateContent for single turn or chats.create for multi-turn. 
-      // Let's use chats.create for better conversation flow.
 
       const chat = ai.chats.create({
         model: 'gemini-2.5-flash',
         config: { systemInstruction }
       });
-
-      // Replay history to context (simplified for this demo)
-      // In a robust app, we would pass the history to chats.create history param.
-      // For this demo, we'll just send the message directly to a new chat instance 
-      // or simplistic request since we don't persist the chat object across re-renders fully without a context provider.
-      // To keep it simple and functional: We will just generate content for the specific question + context.
       
       const response = await chat.sendMessage({ message: userMessage });
       const text = response.text;
@@ -69,7 +60,7 @@ export const SupportBot: React.FC = () => {
       setMessages(prev => [...prev, { role: 'model', text }]);
     } catch (error) {
       console.error("Bot error:", error);
-      setMessages(prev => [...prev, { role: 'model', text: "I'm having trouble connecting right now. Please try again later." }]);
+      setMessages(prev => [...prev, { role: 'model', text: "দুঃখিত, বর্তমানে সংযোগে সমস্যা হচ্ছে। কিছুক্ষণ পর আবার চেষ্টা করুন।" }]);
     } finally {
       setIsLoading(false);
     }
@@ -83,7 +74,7 @@ export const SupportBot: React.FC = () => {
           <div className="bg-slate-900 p-4 flex justify-between items-center border-b border-slate-700">
             <h3 className="text-white font-semibold flex items-center gap-2">
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-              Support AI
+              সাপোর্ট অ্যাসিস্ট্যান্ট
             </h3>
             <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-white">
               <X size={18} />
@@ -121,7 +112,7 @@ export const SupportBot: React.FC = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="Ask about pricing..."
+                placeholder="আপনার প্রশ্ন লিখুন..."
                 className="flex-1 bg-slate-800 text-white text-sm rounded-lg px-3 py-2 border border-slate-700 focus:outline-none focus:border-blue-500"
               />
               <button 
