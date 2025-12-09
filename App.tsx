@@ -3,12 +3,14 @@ import { PRODUCTS } from './constants';
 import { ProductCard } from './components/ProductCard';
 import { CheckoutModal } from './components/CheckoutModal';
 import { SupportBot } from './components/SupportBot';
+import { AboutModal } from './components/AboutModal';
 import { Product } from './types';
-import { Star, Zap, ShieldCheck } from 'lucide-react';
+import { Star, Zap, ShieldCheck, Info } from 'lucide-react';
 
 const App: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
 
   const handleBuyNow = (product: Product) => {
     setSelectedProduct(product);
@@ -30,6 +32,17 @@ const App: React.FC = () => {
               D
             </div>
             <span className="text-xl font-bold text-white tracking-tight">DigiPlus</span>
+          </div>
+
+          {/* Navbar Links */}
+          <div className="flex items-center">
+            <button 
+              onClick={() => setIsAboutOpen(true)}
+              className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors text-sm font-medium px-4 py-2 rounded-lg hover:bg-slate-800"
+            >
+              <Info size={18} />
+              আমার সম্পর্কে
+            </button>
           </div>
         </div>
       </nav>
@@ -113,7 +126,14 @@ const App: React.FC = () => {
           <div className="flex justify-center gap-6 text-sm">
             <a href="#" className="hover:text-white transition-colors">প্রাইভেসি পলিসি</a>
             <a href="#" className="hover:text-white transition-colors">টার্মস অফ সার্ভিস</a>
-            <a href="#" className="hover:text-white transition-colors">সাপোর্ট</a>
+            <a 
+              href="https://wa.me/8801607656890" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-green-400 transition-colors font-medium flex items-center gap-1"
+            >
+              সাপোর্ট (WhatsApp)
+            </a>
           </div>
         </div>
       </footer>
@@ -123,6 +143,11 @@ const App: React.FC = () => {
         onClose={() => setIsCheckoutOpen(false)}
         product={selectedProduct}
         onSuccess={handleCheckoutSuccess}
+      />
+
+      <AboutModal 
+        isOpen={isAboutOpen}
+        onClose={() => setIsAboutOpen(false)}
       />
 
       <SupportBot />
