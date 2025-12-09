@@ -59,11 +59,11 @@ const App: React.FC = () => {
             </div>
             
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight">
-              আপনার এআই অভিজ্ঞতা <br/><span className="gradient-text">আপগ্রেড করুন</span>
+              আপনার Ai অভিজ্ঞতা <br/><span className="gradient-text">আপগ্রেড করুন</span>
             </h1>
             
             <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-12">
-              চ্যাটজিপিটি প্লাস এবং প্রিমিয়াম এআই টুলস কিনুন খুব সহজে। 
+              চ্যাটজিপিটি প্লাস এবং প্রিমিয়াম Ai টুলস কিনুন খুব সহজে। 
               বিকাশ, নগদ, রকেট পেমেন্ট, ইনস্ট্যান্ট ডেলিভারি এবং ২৪/৭ সাপোর্ট।
             </p>
 
