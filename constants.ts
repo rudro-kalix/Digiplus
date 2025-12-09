@@ -13,13 +13,13 @@ export const PRODUCTS: Product[] = [
       '✅দ্রুত রেসপন্স টাইম',
       '✅নতুন ফিচারে অগ্রাধিকার',
       '✅ Faster Response Speed',
-'✅ Priority Access (Rush Hour-এও দ্রুত চলবে)',
-'✅ Access to Advanced Models (GPT-4o / GPT-5.1)',
-'✅ Codex Agent Access',
-'✅ Improved Image Generation',
-'✅ Higher Message Limits',
-'✅ More File Upload Capacity',
-'✅ 1 Month Official Subscription'
+      '✅ Priority Access (Rush Hour-এও দ্রুত চলবে)',
+      '✅ Access to Advanced Models (GPT-4o / GPT-5.1)',
+      '✅ Codex Agent Access',
+      '✅ Improved Image Generation',
+      '✅ Higher Message Limits',
+      '✅ More File Upload Capacity',
+      '✅ ইনস্ট্যান্ট এক্টিভেশন'
 
     ]
   },
@@ -35,11 +35,11 @@ export const PRODUCTS: Product[] = [
       '১০০% ব্যক্তিগত অ্যাকাউন্ট (Personal)',
       '৮২০০ টাকা সাশ্রয়',
       '✅ আর অনেক বেশী File Upload',
-'✅ Fast Images Generation',
-'✅ Unlimited Prompt',
-'✅ Full Access GPT-5.1',
-'✅ Voice Mode ',
-'✅ 12 Month Official Subscription'
+      '✅ Fast Images Generation',
+      '✅ Unlimited Prompt',
+      '✅ Full Access GPT-5.1',
+      '✅ Voice Mode ',
+      '✅ ইনস্ট্যান্ট এক্টিভেশন'
 
     ]
   }
