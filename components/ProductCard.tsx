@@ -1,6 +1,6 @@
 import React from 'react';
 import { Product } from '../types';
-import { Check, Zap, User } from 'lucide-react';
+import { Check, Zap, User, Clock } from 'lucide-react';
 
 interface ProductCardProps {
   product: Product;
@@ -8,6 +8,8 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onBuyNow }) => {
+  const isYearly = product.duration.includes('বছর') || product.id.includes('year');
+
   return (
     <div className={`relative bg-slate-800 rounded-2xl p-6 border ${product.popular ? 'border-blue-500 shadow-blue-500/10' : 'border-slate-700'} shadow-xl hover:transform hover:-translate-y-1 transition-all duration-300 flex flex-col`}>
       {product.popular && (
@@ -19,6 +21,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onBuyNow }) =
       <div className="mb-6 text-center">
         <div className="text-6xl mb-4">{product.image}</div>
         <h3 className="text-2xl font-bold text-white mb-2">{product.name}</h3>
+        
+        {/* Highlight Duration Badge */}
+        <div className="flex justify-center mb-3">
+            <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-lg border shadow-lg ${
+                isYearly
+                ? 'bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-amber-500/50 text-amber-300 shadow-amber-900/20' 
+                : 'bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border-cyan-500/50 text-cyan-300 shadow-cyan-900/20'
+            }`}>
+                <Clock size={16} />
+                <span className="font-bold text-lg">{product.duration}</span>
+            </div>
+        </div>
+
         <p className="text-slate-400 text-sm mb-4">{product.description}</p>
         
         {/* Highlight Personal Account */}
@@ -29,7 +44,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onBuyNow }) =
 
         <div className="flex justify-center items-baseline gap-1">
           <span className="text-4xl font-bold text-white">৳{product.price.toLocaleString('bn-BD')}</span>
-          <span className="text-slate-500">/{product.duration}</span>
         </div>
       </div>
 

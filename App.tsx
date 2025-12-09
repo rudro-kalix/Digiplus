@@ -27,9 +27,9 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-tr from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center text-white font-bold">
-              ডি
+              D
             </div>
-            <span className="text-xl font-bold text-white tracking-tight">ডিজিসাব</span>
+            <span className="text-xl font-bold text-white tracking-tight">DigiPlus</span>
           </div>
         </div>
       </nav>
@@ -109,7 +109,7 @@ const App: React.FC = () => {
 
       <footer className="bg-slate-950 py-12 border-t border-slate-900">
         <div className="max-w-7xl mx-auto px-4 text-center text-slate-500">
-          <p className="mb-4">&copy; ২০২৪ ডিজিসাব। সর্বস্বত্ব সংরক্ষিত।</p>
+          <p className="mb-4">&copy; ২০২৫ DigiPlus। সর্বস্বত্ব সংরক্ষিত।</p>
           <div className="flex justify-center gap-6 text-sm">
             <a href="#" className="hover:text-white transition-colors">প্রাইভেসি পলিসি</a>
             <a href="#" className="hover:text-white transition-colors">টার্মস অফ সার্ভিস</a>

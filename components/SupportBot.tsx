@@ -47,6 +47,7 @@ export const SupportBot: React.FC = () => {
         Store Policies:
         - Delivery time: 10-30 minutes after payment.
         - Payment Methods: bKash, Nagad, Rocket, Upay.
+        - Payment/Support Number: 01607656890 (Rocket: 01722195597)
         - Refund: Full refund if we cannot activate the subscription.
         
         Keep answers concise (under 50 words) and helpful. 

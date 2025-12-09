@@ -50,8 +50,13 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     { id: 'bkash', name: 'বিকাশ', color: 'bg-pink-600 hover:bg-pink-500' },
     { id: 'nagad', name: 'নগদ', color: 'bg-orange-600 hover:bg-orange-500' },
     { id: 'rocket', name: 'রকেট', color: 'bg-purple-600 hover:bg-purple-500' },
-    { id: 'upay', name: 'উপায়', color: 'bg-blue-600 hover:bg-blue-500' },
+    { id: 'upay', name: 'উপায়', color: 'bg-yellow-500 hover:bg-yellow-400 text-black' },
   ];
+
+  const getPaymentNumber = () => {
+    if (method === 'rocket') return '01722195597';
+    return '01607656890';
+  };
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -129,7 +134,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 </div>
 
                 <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700/50 mb-4 text-sm text-slate-300">
-                   অনুগ্রহ করে <span className="font-bold text-white">01700000000</span> নম্বরে সেন্ড মানি করুন।
+                   অনুগ্রহ করে <span className="font-bold text-white">{getPaymentNumber()}</span> নম্বরে সেন্ড মানি করুন।
                 </div>
 
                 <div className="space-y-3">
