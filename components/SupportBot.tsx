@@ -40,7 +40,7 @@ export const SupportBot: React.FC = () => {
         2. ChatGPT Go (1 Year) - 295 Taka. 
 
         Process:
-        - Since these are Personal Accounts (not shared/team), we require the customer's Gmail and Password during checkout.
+        - Since these are Personal Accounts (not shared/team), we require the customer's Gmail and Password for chatgpt subscription during checkout.
         - We log in to their account, buy/activate the subscription, and then they can change their password.
         - It is 100% secure and used only for activation.
         
