@@ -35,22 +35,28 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const googleFormTrxEntry = import.meta.env.VITE_GOOGLE_FORM_TRX_ENTRY;
   const googleFormProductEntry = import.meta.env.VITE_GOOGLE_FORM_PRODUCT_ENTRY;
 
+  const isGoogleFormConfigured =
+    Boolean(googleFormAction) &&
+    Boolean(googleFormEmailEntry) &&
+    Boolean(googleFormPasswordEntry);
+
   const submitToGoogleForm = async () => {
-    if (!googleFormAction || !googleFormEmailEntry || !googleFormPasswordEntry) {
-      console.warn('Google Form config missing - skipping submission');
-      return;
+    if (!isGoogleFormConfigured) {
+      throw new Error('Google Form config missing');
     }
 
     const formData = new FormData();
-    formData.append(googleFormEmailEntry, email);
-    formData.append(googleFormPasswordEntry, password);
+    formData.append(googleFormEmailEntry!, email);
+    formData.append(googleFormPasswordEntry!, password);
 
     if (googleFormMethodEntry) formData.append(googleFormMethodEntry, method);
     if (googleFormSenderEntry) formData.append(googleFormSenderEntry, senderNumber);
     if (googleFormTrxEntry) formData.append(googleFormTrxEntry, trxId);
     if (googleFormProductEntry && product?.name) formData.append(googleFormProductEntry, product.name);
 
-    await fetch(googleFormAction, {
+    formData.append('submit', 'Submit');
+
+    await fetch(googleFormAction!, {
       method: 'POST',
       mode: 'no-cors',
       body: formData,
@@ -59,6 +65,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
   const handlePay = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isGoogleFormConfigured) {
+      setSubmitError('গুগল ফর্ম কনফিগার করা নেই। সঠিক লিংক ও এন্ট্রি আইডি সেট করুন।');
+      return;
+    }
+
     setStep('processing');
     setSubmitError('');
 
