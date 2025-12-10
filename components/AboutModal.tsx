@@ -36,7 +36,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
                 <div className="w-full h-full rounded-full overflow-hidden border-4 border-slate-900 bg-slate-800 relative">
                   {/* Replace src with your actual profile picture URL */}
                   <img 
-                    src="https://placehold.co/400x400/1e293b/ffffff?text=Profile+Pic" 
+                    src="https://github.com/rudro-kalix/Digiplus/blob/main/photo_2025-12-09_23-43-17.jpg?raw=true" 
                     alt="Md. Julkar Nayen Bin Hossain" 
                     className="w-full h-full object-cover"
                   />
@@ -44,7 +44,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
               </div>
               <div className="text-center">
                 <h3 className="text-xl font-bold text-white">Md. Julkar Nayen</h3>
-                <p className="text-blue-400 text-sm">Software Engineer Student</p>
+                <p className="text-blue-400 text-sm">Software Engineering Student</p>
               </div>
             </div>
 
@@ -95,7 +95,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
             <div className="rounded-xl overflow-hidden border border-slate-700 shadow-2xl bg-slate-800">
               {/* Replace src with your actual ID card image URL */}
               <img 
-                src="https://placehold.co/800x500/1e293b/ffffff?text=University+ID+Card" 
+                src="https://github.com/rudro-kalix/Digiplus/blob/main/Screenshot_20251209-234114.png?raw=true" 
                 alt="DIU ID Card" 
                 className="w-full h-auto object-contain"
               />
