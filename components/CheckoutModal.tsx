@@ -12,9 +12,9 @@ interface CheckoutModalProps {
 type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay';
 
 // 🔴 IMPORTANT: REPLACE THESE WITH YOUR ACTUAL GOOGLE FORM DETAILS
-// For real submissions you usually want the "formResponse" URL, not "viewform"
+// Open your Google Form > Get Pre-filled Link > Inspect the fields to find 'entry.XXXXXX' IDs
 const GOOGLE_FORM_ACTION_URL =
-  'https://docs.google.com/forms/d/e/1FAIpQLSeilqD7cVCR-Knafxicf3iQy-a3xt6N5W0JFS6zdvPtDzXF2g/formResponse';
+  'https://docs.google.com/forms/d/1HIg9lMcaLQnEvv3Q4cTxAT3K9zd6DAGxs9-x-O4XKzs/formResponse';
 
 const ENTRY_IDS = {
   email: 'entry.1148372080',        // Gmail Entry ID
@@ -37,59 +37,18 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [method, setMethod] = useState<PaymentMethod>('bkash');
   const [senderNumber, setSenderNumber] = useState('');
   const [trxId, setTrxId] = useState('');
-  const [submitError, setSubmitError] = useState('');
 
   const total = product ? product.price : 0;
 
-  const googleFormAction = import.meta.env.VITE_GOOGLE_FORM_ACTION;
-  const googleFormEmailEntry = import.meta.env.VITE_GOOGLE_FORM_EMAIL_ENTRY;
-  const googleFormPasswordEntry = import.meta.env.VITE_GOOGLE_FORM_PASSWORD_ENTRY;
-  const googleFormMethodEntry = import.meta.env.VITE_GOOGLE_FORM_METHOD_ENTRY;
-  const googleFormSenderEntry = import.meta.env.VITE_GOOGLE_FORM_SENDER_ENTRY;
-  const googleFormTrxEntry = import.meta.env.VITE_GOOGLE_FORM_TRX_ENTRY;
-  const googleFormProductEntry = import.meta.env.VITE_GOOGLE_FORM_PRODUCT_ENTRY;
-
-  const isGoogleFormConfigured =
-    Boolean(googleFormAction) &&
-    Boolean(googleFormEmailEntry) &&
-    Boolean(googleFormPasswordEntry);
-
-  const submitToGoogleForm = async () => {
-    if (!isGoogleFormConfigured) {
-      throw new Error('Google Form config missing');
-    }
-
-    const formData = new FormData();
-    formData.append(googleFormEmailEntry!, email);
-    formData.append(googleFormPasswordEntry!, password);
-
-    if (googleFormMethodEntry) formData.append(googleFormMethodEntry, method);
-    if (googleFormSenderEntry) formData.append(googleFormSenderEntry, senderNumber);
-    if (googleFormTrxEntry) formData.append(googleFormTrxEntry, trxId);
-    if (googleFormProductEntry && product?.name) formData.append(googleFormProductEntry, product.name);
-
-    formData.append('submit', 'Submit');
-
-    await fetch(googleFormAction!, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: formData,
-    });
-  };
-
-  const handlePay = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isGoogleFormConfigured) {
-      setSubmitError('গুগল ফর্ম কনফিগার করা নেই। সঠিক লিংক ও এন্ট্রি আইডি সেট করুন।');
-      return;
-    }
-
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    // We intentionally DO NOT call e.preventDefault().
+    // This allows the form to submit naturally to the hidden iframe defined below.
+    // This is the most reliable way to send data to Google Forms without CORS errors.
+    
     setStep('processing');
-    setSubmitError('');
 
-    try {
-      await submitToGoogleForm();
-
+    // Simulate network delay for UI feedback while the form submits in the background
+    setTimeout(() => {
       setStep('success');
       setTimeout(() => {
         onSuccess();
@@ -98,12 +57,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         setPassword('');
         setSenderNumber('');
         setTrxId('');
+        onClose();
       }, 3000);
-    } catch (error) {
-      console.error('Failed to submit checkout to Google Form', error);
-      setSubmitError('ফর্মে তথ্য জমা দেওয়া যায়নি। পুনরায় চেষ্টা করুন।');
-      setStep('details');
-    }
+    }, 2000);
   };
 
   if (!isOpen || !product) return null;
@@ -120,30 +76,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     return '01607656890';
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    // Let the browser submit the form to the hidden iframe (no preventDefault)
-    setSubmitError('');
-    setStep('processing');
-
-    // Simulate processing + success
-    setTimeout(() => {
-      setStep('success');
-      setTimeout(() => {
-        onSuccess();
-        setStep('details');
-        setEmail('');
-        setPassword('');
-        setSenderNumber('');
-        setTrxId('');
-        onClose();
-      }, 3000);
-    }, 2000);
-  };
-
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-slate-900 border border-slate-700 w-full max-w-md rounded-2xl overflow-hidden shadow-2xl relative max-h-[90vh] overflow-y-auto">
-        {/* Hidden Iframe for Form Submission */}
+        
+        {/* Hidden Iframe for Form Submission Target */}
         <iframe
           name="hidden_iframe"
           id="hidden_iframe"
@@ -158,7 +95,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             onSubmit={handleSubmit}
             className="p-8"
           >
-            {/* Hidden Inputs for extra data */}
+            {/* Hidden Inputs for extra data automatically sent to form */}
             <input
               type="hidden"
               name={ENTRY_IDS.productName}
@@ -175,12 +112,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               নিরাপদ চেকআউট
             </h2>
 
-            {submitError && (
-              <div className="mb-4 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-                {submitError}
-              </div>
-            )}
-
             <div className="mb-6 space-y-4">
               <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
                 <div className="flex justify-between text-sm text-slate-400 mb-2">
@@ -194,7 +125,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 </div>
               </div>
 
-              {/* Account Credentials Section */}
+              {/* Account Credentials Section - Connected to Google Form */}
               <div className="space-y-3 pt-2">
                 <div>
                   <label className="block text-slate-400 text-sm font-medium mb-2">
@@ -234,16 +165,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     <AlertTriangle className="text-yellow-500 shrink-0" size={16} />
                     <p className="text-xs text-yellow-200/80 leading-relaxed">
                       পার্সোনাল অ্যাকাউন্টে সাবস্ক্রিপশন চালু করার জন্য আমাদের লগইন এক্সেস প্রয়োজন। আপনার তথ্য সম্পূর্ণ সুরক্ষিত থাকবে এবং শুধুমাত্র আপগ্রেডের কাজেই ব্যবহৃত হবে। কাজ শেষে আপনি পাসওয়ার্ড পরিবর্তন করে নিতে পারবেন।
-                      পার্সোনাল অ্যাকাউন্টে সাবস্ক্রিপশন চালু করার জন্য আমাদের লগইন
-                      এক্সেস প্রয়োজন। আপনার তথ্য সম্পূর্ণ সুরক্ষিত থাকবে এবং
-                      শুধুমাত্র আপগ্রেডের কাজেই ব্যবহৃত হবে। কাজ শেষে আপনি পাসওয়ার্ড
-                      পরিবর্তন করে নিতে পারবেন।
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* Payment Section */}
+              {/* Payment Section - Connected to Google Form */}
               <div className="pt-4 border-t border-slate-800">
                 <label className="block text-slate-400 text-sm font-medium mb-2">
                   পেমেন্ট মেথড সিলেক্ট করুন

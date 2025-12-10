@@ -11,7 +11,6 @@ export const SupportBot: React.FC = () => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -24,12 +23,12 @@ export const SupportBot: React.FC = () => {
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
-    if (!apiKey) {
+    if (!process.env.API_KEY) {
       setMessages(prev => [
         ...prev,
         {
           role: 'model',
-          text: 'দুঃখিত, বট চালু করা যায়নি। সার্ভার অ্যাডমিনকে VITE_GOOGLE_API_KEY সেট করতে বলুন।'
+          text: 'দুঃখিত, বট চালু করা যায়নি। সার্ভার অ্যাডমিনকে API_KEY সেট করতে বলুন।'
         }
       ]);
       return;
@@ -41,7 +40,7 @@ export const SupportBot: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const ai = new GoogleGenAI({ apiKey });
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const systemInstruction = `
         You are a friendly and professional customer support agent for "DigiSub", a digital store selling ChatGPT subscriptions in Bangladesh.
         
@@ -74,7 +73,11 @@ export const SupportBot: React.FC = () => {
       const response = await chat.sendMessage({ message: userMessage });
       const text = response.text;
 
-      setMessages(prev => [...prev, { role: 'model', text }]);
+      if (text) {
+        setMessages(prev => [...prev, { role: 'model', text }]);
+      } else {
+        setMessages(prev => [...prev, { role: 'model', text: "দুঃখিত, কোনো উত্তর পাওয়া যায়নি।" }]);
+      }
     } catch (error) {
       console.error("Bot error:", error);
       setMessages(prev => [...prev, { role: 'model', text: "দুঃখিত, বর্তমানে সংযোগে সমস্যা হচ্ছে। কিছুক্ষণ পর আবার চেষ্টা করুন।" }]);
