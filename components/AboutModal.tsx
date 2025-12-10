@@ -37,7 +37,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
                   {/* Replace src with your actual profile picture URL */}
                   <img 
                     src="https://github.com/rudro-kalix/Digiplus/blob/main/photo_2025-12-09_23-43-17.jpg?raw=true" 
-                    alt="Md. Julkar Nayen Bin Hossain" 
+           
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -96,7 +96,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
               {/* Replace src with your actual ID card image URL */}
               <img 
                 src="https://github.com/rudro-kalix/Digiplus/blob/main/Screenshot_20251209-234114.png?raw=true" 
-                alt="DIU ID Card" 
+            
                 className="w-full h-auto object-contain"
               />
             </div>
