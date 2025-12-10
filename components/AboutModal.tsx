@@ -32,13 +32,12 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
             
             {/* Profile Picture Side */}
             <div className="flex flex-col items-center space-y-4">
-              <div className="w-48 h-48 rounded-full p-1 bg-gradient-to-tr from-blue-500 to-purple-500 shadow-xl">
-                <div className="w-full h-full rounded-full overflow-hidden border-4 border-slate-900 bg-slate-800 relative">
-                  {/* Replace src with your actual profile picture URL */}
+              <div className="w-48 h-48 rounded-full p-1 bg-gradient-to-tr from-blue-500 to-purple-500 shadow-xl shrink-0">
+                <div className="w-full h-full rounded-full overflow-hidden border-4 border-slate-900 bg-slate-800 relative group">
                   <img 
-                    src="https://github.com/rudro-kalix/Digiplus/blob/main/photo_2025-12-09_23-43-17.jpg?raw=true" 
-           
-                    className="w-full h-full object-cover"
+                    src="https://raw.githubusercontent.com/rudro-kalix/Digiplus/main/photo_2025-12-09_23-43-17.jpg" 
+                    alt="Profile"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                 </div>
               </div>
@@ -50,9 +49,9 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
 
             {/* Info Side */}
             <div className="flex-1 space-y-6 w-full">
-              <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700 space-y-4">
+              <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700 space-y-4 hover:border-slate-600 transition-colors">
                 <div className="flex items-start gap-3">
-                  <User className="text-slate-400 mt-1 shrink-0" size={18} />
+                  <User className="text-blue-500 mt-1 shrink-0" size={18} />
                   <div>
                     <p className="text-slate-400 text-xs uppercase tracking-wider font-bold">Full Name</p>
                     <p className="text-white font-medium">Md. Julkar Nayen Bin Hossain</p>
@@ -60,7 +59,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <Building2 className="text-slate-400 mt-1 shrink-0" size={18} />
+                  <Building2 className="text-purple-500 mt-1 shrink-0" size={18} />
                   <div>
                     <p className="text-slate-400 text-xs uppercase tracking-wider font-bold">University</p>
                     <p className="text-white font-medium">Daffodil International University</p>
@@ -68,7 +67,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <GraduationCap className="text-slate-400 mt-1 shrink-0" size={18} />
+                  <GraduationCap className="text-green-500 mt-1 shrink-0" size={18} />
                   <div>
                     <p className="text-slate-400 text-xs uppercase tracking-wider font-bold">Department</p>
                     <p className="text-white font-medium">B.Sc. in Software Engineering</p>
@@ -76,10 +75,10 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <CreditCard className="text-slate-400 mt-1 shrink-0" size={18} />
+                  <CreditCard className="text-yellow-500 mt-1 shrink-0" size={18} />
                   <div>
                     <p className="text-slate-400 text-xs uppercase tracking-wider font-bold">Student ID</p>
-                    <p className="text-white font-medium font-mono">252-35-584</p>
+                    <p className="text-white font-medium font-mono tracking-wider">252-35-584</p>
                   </div>
                 </div>
               </div>
@@ -89,15 +88,14 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
           {/* ID Card Image Section */}
           <div className="mt-8">
             <h4 className="text-white font-semibold mb-4 flex items-center gap-2">
-              <CreditCard size={18} className="text-green-500" />
+              <CreditCard size={18} className="text-blue-400" />
               University ID Card
             </h4>
-            <div className="rounded-xl overflow-hidden border border-slate-700 shadow-2xl bg-slate-800">
-              {/* Replace src with your actual ID card image URL */}
+            <div className="rounded-xl overflow-hidden border border-slate-700 shadow-2xl bg-slate-800 hover:border-slate-600 transition-all">
               <img 
-                src="https://github.com/rudro-kalix/Digiplus/blob/main/Screenshot_20251209-234114.png?raw=true" 
-            
-                className="w-full h-auto object-contain"
+                src="https://raw.githubusercontent.com/rudro-kalix/Digiplus/main/Screenshot_20251209-234114.png" 
+                alt="University ID Card"
+                className="w-full h-auto object-contain block"
               />
             </div>
           </div>

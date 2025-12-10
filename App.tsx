@@ -28,7 +28,7 @@ const App: React.FC = () => {
       <nav className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-tr from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center text-white font-bold">
+            <div className="w-8 h-8 bg-gradient-to-tr from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20">
               D
             </div>
             <span className="text-xl font-bold text-white tracking-tight">DigiPlus</span>
@@ -38,10 +38,11 @@ const App: React.FC = () => {
           <div className="flex items-center">
             <button 
               onClick={() => setIsAboutOpen(true)}
-              className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors text-sm font-medium px-4 py-2 rounded-lg hover:bg-slate-800"
+              className="group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-800 border border-slate-700 hover:border-blue-500/50 hover:bg-slate-800/80 text-slate-300 hover:text-white transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-blue-900/20 active:scale-95"
             >
-              <Info size={18} />
-              আমার সম্পর্কে
+              <span className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <Info size={18} className="relative group-hover:text-blue-400 transition-colors" />
+              <span className="relative font-medium text-sm">আমার সম্পর্কে</span>
             </button>
           </div>
         </div>
@@ -94,21 +95,21 @@ const App: React.FC = () => {
           <div className="max-w-7xl mx-auto px-4 text-center">
              <h2 className="text-3xl font-bold text-white mb-12">কেন আমাদের থেকে কিনবেন?</h2>
              <div className="grid md:grid-cols-3 gap-8">
-                <div className="p-6 bg-slate-800 rounded-xl border border-slate-700">
+                <div className="p-6 bg-slate-800 rounded-xl border border-slate-700 hover:border-slate-600 transition-colors">
                    <div className="w-12 h-12 bg-blue-900/50 rounded-lg flex items-center justify-center mx-auto mb-4 text-blue-400">
                      <Zap />
                    </div>
                    <h3 className="text-white font-semibold mb-2">দ্রুত ডেলিভারি</h3>
                    <p className="text-slate-400 text-sm">পেমেন্ট কনফার্ম করার কয়েক সেকেন্ডের মধ্যেই ইমেইলে আপনার লগইন তথ্য পেয়ে যাবেন।</p>
                 </div>
-                <div className="p-6 bg-slate-800 rounded-xl border border-slate-700">
+                <div className="p-6 bg-slate-800 rounded-xl border border-slate-700 hover:border-slate-600 transition-colors">
                    <div className="w-12 h-12 bg-green-900/50 rounded-lg flex items-center justify-center mx-auto mb-4 text-green-400">
                      <ShieldCheck />
                    </div>
                    <h3 className="text-white font-semibold mb-2">গ্যারান্টিযুক্ত ওয়ারেন্টি</h3>
                    <p className="text-slate-400 text-sm">সাবস্ক্রিপশনের মেয়াদকালীন সম্পূর্ণ ওয়ারেন্টি। কোনো সমস্যা হলে সাথে সাথে রিপ্লেসমেন্ট।</p>
                 </div>
-                <div className="p-6 bg-slate-800 rounded-xl border border-slate-700">
+                <div className="p-6 bg-slate-800 rounded-xl border border-slate-700 hover:border-slate-600 transition-colors">
                    <div className="w-12 h-12 bg-purple-900/50 rounded-lg flex items-center justify-center mx-auto mb-4 text-purple-400">
                      <Star />
                    </div>
