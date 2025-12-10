@@ -16,7 +16,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   onClose,
 // 🔴 IMPORTANT: REPLACE THESE WITH YOUR ACTUAL GOOGLE FORM DETAILS
 // Open your Google Form > Get Pre-filled Link > Inspect the fields to find 'entry.XXXXXX' IDs
-const GOOGLE_FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeilqD7cVCR-Knafxicf3iQy-a3xt6N5W0JFS6zdvPtDzXF2g/viewform?usp=header"; 
+const GOOGLE_FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeilqD7cVCR-Knafxicf3iQy-a3xt6N5W0JFS6zdvPtDzXF2g/viewform"; 
 
 const ENTRY_IDS = {
   email: "entry.1148372080",       // Replace with Gmail Entry ID
