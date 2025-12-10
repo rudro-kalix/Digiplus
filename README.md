@@ -34,4 +34,4 @@ VITE_GOOGLE_FORM_TRX_ENTRY=entry.<trx_id_field_id>
 VITE_GOOGLE_FORM_PRODUCT_ENTRY=entry.<product_field_id>
 ```
 
-The action URL plus the email and password entry IDs are required; the others are optional. If any required field is missing, checkout will stay on the form and show a configuration error. The app will post the data in `no-cors` mode so the form response is stored even when hosted on Vercel.
+The action URL plus the email and password entry IDs are required to actually log submissions in your sheet; the others are optional. If they are missing, checkout still works but the form won't record the submission. The app posts the data in `no-cors` mode so the form response is stored even when hosted on Vercel.
