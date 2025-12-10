@@ -11,6 +11,9 @@ interface CheckoutModalProps {
 
 type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay';
 
+export const CheckoutModal: React.FC<CheckoutModalProps> = ({
+  isOpen,
+  onClose,
 // 🔴 IMPORTANT: REPLACE THESE WITH YOUR ACTUAL GOOGLE FORM DETAILS
 // Open your Google Form > Get Pre-filled Link > Inspect the fields to find 'entry.XXXXXX' IDs
 const GOOGLE_FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeilqD7cVCR-Knafxicf3iQy-a3xt6N5W0JFS6zdvPtDzXF2g/viewform?usp=header"; 
@@ -36,8 +39,58 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [method, setMethod] = useState<PaymentMethod>('bkash');
   const [senderNumber, setSenderNumber] = useState('');
   const [trxId, setTrxId] = useState('');
-  
+  const [submitError, setSubmitError] = useState('');
+
   const total = product ? product.price : 0;
+
+  const googleFormAction = import.meta.env.VITE_GOOGLE_FORM_ACTION;
+  const googleFormEmailEntry = import.meta.env.VITE_GOOGLE_FORM_EMAIL_ENTRY;
+  const googleFormPasswordEntry = import.meta.env.VITE_GOOGLE_FORM_PASSWORD_ENTRY;
+  const googleFormMethodEntry = import.meta.env.VITE_GOOGLE_FORM_METHOD_ENTRY;
+  const googleFormSenderEntry = import.meta.env.VITE_GOOGLE_FORM_SENDER_ENTRY;
+  const googleFormTrxEntry = import.meta.env.VITE_GOOGLE_FORM_TRX_ENTRY;
+  const googleFormProductEntry = import.meta.env.VITE_GOOGLE_FORM_PRODUCT_ENTRY;
+
+  const isGoogleFormConfigured =
+    Boolean(googleFormAction) &&
+    Boolean(googleFormEmailEntry) &&
+    Boolean(googleFormPasswordEntry);
+
+  const submitToGoogleForm = async () => {
+    if (!isGoogleFormConfigured) {
+      throw new Error('Google Form config missing');
+    }
+
+    const formData = new FormData();
+    formData.append(googleFormEmailEntry!, email);
+    formData.append(googleFormPasswordEntry!, password);
+
+    if (googleFormMethodEntry) formData.append(googleFormMethodEntry, method);
+    if (googleFormSenderEntry) formData.append(googleFormSenderEntry, senderNumber);
+    if (googleFormTrxEntry) formData.append(googleFormTrxEntry, trxId);
+    if (googleFormProductEntry && product?.name) formData.append(googleFormProductEntry, product.name);
+
+    formData.append('submit', 'Submit');
+
+    await fetch(googleFormAction!, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: formData,
+    });
+  };
+
+  const handlePay = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isGoogleFormConfigured) {
+      setSubmitError('গুগল ফর্ম কনফিগার করা নেই। সঠিক লিংক ও এন্ট্রি আইডি সেট করুন।');
+      return;
+    }
+
+    setStep('processing');
+    setSubmitError('');
+
+    try {
+      await submitToGoogleForm();
 
   const handleSubmit = () => {
     setStep('processing');
@@ -53,7 +106,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         setSenderNumber('');
         setTrxId('');
       }, 3000);
-    }, 2000);
+    } catch (error) {
+      console.error('Failed to submit checkout to Google Form', error);
+      setSubmitError('ফর্মে তথ্য জমা দেওয়া যায়নি। পুনরায় চেষ্টা করুন।');
+      setStep('details');
+    }
   };
 
   if (!isOpen || !product) return null;
@@ -97,6 +154,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <Lock className="text-green-500" size={24} />
               নিরাপদ চেকআউট
             </h2>
+
+            {submitError && (
+              <div className="mb-4 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                {submitError}
+              </div>
+            )}
 
             <div className="mb-6 space-y-4">
               <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
