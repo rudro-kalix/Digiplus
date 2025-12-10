@@ -34,9 +34,8 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
             <div className="flex flex-col items-center space-y-4">
               <div className="w-48 h-48 rounded-full p-1 bg-gradient-to-tr from-blue-500 to-purple-500 shadow-xl">
                 <div className="w-full h-full rounded-full overflow-hidden border-4 border-slate-900 bg-slate-800 relative">
-                  {/* Replace src with your actual profile picture URL */}
                   <img 
-                    src="https://github.com/rudro-kalix/Digiplus/blob/main/photo_2025-12-09_23-43-17.jpg?raw=true" 
+                    src="./photo_2025-12-09_23-43-17.jpg" 
                     alt="Md. Julkar Nayen Bin Hossain" 
                     className="w-full h-full object-cover"
                   />
@@ -44,7 +43,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
               </div>
               <div className="text-center">
                 <h3 className="text-xl font-bold text-white">Md. Julkar Nayen</h3>
-                <p className="text-blue-400 text-sm">Software Engineering Student</p>
+                <p className="text-blue-400 text-sm">Software Engineer Student</p>
               </div>
             </div>
 
@@ -93,9 +92,8 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
               University ID Card
             </h4>
             <div className="rounded-xl overflow-hidden border border-slate-700 shadow-2xl bg-slate-800">
-              {/* Replace src with your actual ID card image URL */}
               <img 
-                src="https://github.com/rudro-kalix/Digiplus/blob/main/Screenshot_20251209-234114.png?raw=true" 
+                src="./Screenshot_20251209-234114.png" 
                 alt="DIU ID Card" 
                 className="w-full h-auto object-contain"
               />
