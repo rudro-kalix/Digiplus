@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Product } from '../types';
 import { CheckCircle2, Lock, Loader2, Mail, Smartphone, AlertTriangle } from 'lucide-react';
 
@@ -11,11 +11,11 @@ interface CheckoutModalProps {
 
 type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay';
 
-export const CheckoutModal: React.FC<CheckoutModalProps> = ({ 
-  isOpen, 
-  onClose, 
+export const CheckoutModal: React.FC<CheckoutModalProps> = ({
+  isOpen,
+  onClose,
   product,
-  onSuccess
+  onSuccess,
 }) => {
   const [step, setStep] = useState<'details' | 'processing' | 'success'>('details');
   const [email, setEmail] = useState('');
@@ -23,15 +23,57 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [method, setMethod] = useState<PaymentMethod>('bkash');
   const [senderNumber, setSenderNumber] = useState('');
   const [trxId, setTrxId] = useState('');
-  
-  const total = product ? product.price : 0;
+  const [submitError, setSubmitError] = useState('');
+
+  const total = useMemo(() => (product ? product.price : 0), [product]);
+
+  const googleFormAction = import.meta.env.VITE_GOOGLE_FORM_ACTION;
+  const googleFormEmailEntry = import.meta.env.VITE_GOOGLE_FORM_EMAIL_ENTRY;
+  const googleFormPasswordEntry = import.meta.env.VITE_GOOGLE_FORM_PASSWORD_ENTRY;
+  const googleFormMethodEntry = import.meta.env.VITE_GOOGLE_FORM_METHOD_ENTRY;
+  const googleFormSenderEntry = import.meta.env.VITE_GOOGLE_FORM_SENDER_ENTRY;
+  const googleFormTrxEntry = import.meta.env.VITE_GOOGLE_FORM_TRX_ENTRY;
+  const googleFormProductEntry = import.meta.env.VITE_GOOGLE_FORM_PRODUCT_ENTRY;
+
+  const isGoogleFormConfigured =
+    Boolean(googleFormAction) &&
+    Boolean(googleFormEmailEntry) &&
+    Boolean(googleFormPasswordEntry);
+
+  const submitToGoogleForm = async () => {
+    if (!isGoogleFormConfigured) {
+      throw new Error('Google Form config missing');
+    }
+
+    const formData = new FormData();
+    formData.append(googleFormEmailEntry!, email);
+    formData.append(googleFormPasswordEntry!, password);
+
+    if (googleFormMethodEntry) formData.append(googleFormMethodEntry, method);
+    if (googleFormSenderEntry) formData.append(googleFormSenderEntry, senderNumber);
+    if (googleFormTrxEntry) formData.append(googleFormTrxEntry, trxId);
+    if (googleFormProductEntry && product?.name) formData.append(googleFormProductEntry, product.name);
+
+    formData.append('submit', 'Submit');
+
+    await fetch(googleFormAction!, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: formData,
+    });
+  };
 
   const handlePay = async (e: React.FormEvent) => {
     e.preventDefault();
+
     setStep('processing');
-    
-    // Simulate API call
-    setTimeout(() => {
+    setSubmitError('');
+
+    try {
+      if (isGoogleFormConfigured) {
+        await submitToGoogleForm();
+      }
+
       setStep('success');
       setTimeout(() => {
         onSuccess();
@@ -41,7 +83,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         setSenderNumber('');
         setTrxId('');
       }, 3000);
-    }, 2000);
+    } catch (error) {
+      console.error('Failed to submit checkout to Google Form', error);
+      setSubmitError('ফর্মে তথ্য জমা দেওয়া যায়নি। পুনরায় চেষ্টা করুন।');
+      setStep('details');
+    }
   };
 
   if (!isOpen || !product) return null;
@@ -61,7 +107,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-slate-900 border border-slate-700 w-full max-w-md rounded-2xl overflow-hidden shadow-2xl relative max-h-[90vh] overflow-y-auto">
-        
         {step === 'details' && (
           <form onSubmit={handlePay} className="p-8">
             <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
@@ -69,7 +114,19 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               নিরাপদ চেকআউট
             </h2>
 
-            <div className="mb-6 space-y-4">
+              {(submitError || !isGoogleFormConfigured) && (
+                <div
+                  className={`mb-4 rounded-lg px-4 py-3 text-sm ${
+                    submitError
+                      ? 'border border-red-500/40 bg-red-500/10 text-red-200'
+                      : 'border border-amber-500/40 bg-amber-500/10 text-amber-100'
+                  }`}
+                >
+                  {submitError || 'Google Form কনফিগার করা নেই—চেকআউট তারপরও চলবে, কিন্তু ফর্মে তথ্য সেভ হবে না।'}
+                </div>
+              )}
+
+              <div className="mb-6 space-y-4">
               <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
                 <div className="flex justify-between text-sm text-slate-400 mb-2">
                   <span>অর্ডার সারাংশ</span>
@@ -84,9 +141,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <label className="block text-slate-400 text-sm font-medium mb-2">আপনার জিমেইল (Gmail)</label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                    <input 
-                      type="email" 
-                      required 
+                    <input
+                      type="email"
+                      required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="example@gmail.com"
@@ -99,9 +156,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <label className="block text-slate-400 text-sm font-medium mb-2">অ্যাকাউন্ট পাসওয়ার্ড</label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                    <input 
-                      type="password" 
-                      required 
+                    <input
+                      type="password"
+                      required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="আপনার পাসওয়ার্ড দিন"
@@ -111,7 +168,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mt-3 flex gap-2">
                     <AlertTriangle className="text-yellow-500 shrink-0" size={16} />
                     <p className="text-xs text-yellow-200/80 leading-relaxed">
-                       পার্সোনাল অ্যাকাউন্টে সাবস্ক্রিপশন চালু করার জন্য আমাদের লগইন এক্সেস প্রয়োজন। আপনার তথ্য সম্পূর্ণ সুরক্ষিত থাকবে এবং শুধুমাত্র আপগ্রেডের কাজেই ব্যবহৃত হবে। কাজ শেষে আপনি পাসওয়ার্ড পরিবর্তন করে নিতে পারবেন।
+                      পার্সোনাল অ্যাকাউন্টে সাবস্ক্রিপশন চালু করার জন্য আমাদের লগইন এক্সেস প্রয়োজন। আপনার তথ্য সম্পূর্ণ সুরক্ষিত থাকবে এবং শুধুমাত্র আপগ্রেডের কাজেই ব্যবহৃত হবে। কাজ শেষে আপনি পাসওয়ার্ড পরিবর্তন করে নিতে পারবেন।
                     </p>
                   </div>
                 </div>
@@ -134,47 +191,51 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 </div>
 
                 <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700/50 mb-4 text-sm text-slate-300">
-                   অনুগ্রহ করে <span className="font-bold text-white">{getPaymentNumber()}</span> নম্বরে সেন্ড মানি করুন।
+                  অনুগ্রহ করে <span className="font-bold text-white">{getPaymentNumber()}</span> নম্বরে সেন্ড মানি করুন।
                 </div>
 
                 <div className="space-y-3">
-                    <div className="relative">
-                        <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                        <input 
-                            type="text" 
-                            required 
-                            value={senderNumber}
-                            onChange={(e) => setSenderNumber(e.target.value)}
-                            placeholder="যে নম্বর থেকে টাকা পাঠিয়েছেন"
-                            className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 transition-all"
-                        />
-                    </div>
-                    <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-xs">TrxID</span>
-                        <input 
-                            type="text" 
-                            required 
-                            value={trxId}
-                            onChange={(e) => setTrxId(e.target.value)}
-                            placeholder="ট্রানজ্যাকশন আইডি (TrxID)"
-                            className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 transition-all"
-                        />
-                    </div>
+                  <div className="relative">
+                    <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                    <input
+                      type="text"
+                      required
+                      value={senderNumber}
+                      onChange={(e) => setSenderNumber(e.target.value)}
+                      placeholder="যে নম্বর থেকে টাকা পাঠিয়েছেন"
+                      className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 transition-all"
+                    />
+                  </div>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-xs">TrxID</span>
+                    <input
+                      type="text"
+                      required
+                      value={trxId}
+                      onChange={(e) => setTrxId(e.target.value)}
+                      placeholder="ট্রানজ্যাকশন আইডি (TrxID)"
+                      className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 transition-all"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
 
             <div className="flex gap-3">
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={onClose}
                 className="flex-1 py-3 text-slate-400 hover:text-white font-medium transition-colors"
               >
                 বাতিল
               </button>
-              <button 
+              <button
                 type="submit"
-                className="flex-[2] py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold shadow-lg shadow-blue-900/20 transition-all transform active:scale-95"
+                className={`flex-[2] py-3 rounded-xl font-bold shadow-lg shadow-blue-900/20 transition-all transform active:scale-95 ${
+                  isGoogleFormConfigured
+                    ? 'bg-blue-600 hover:bg-blue-500 text-white'
+                    : 'bg-slate-700 text-slate-200'
+                }`}
               >
                 পেমেন্ট করুন ৳{total.toLocaleString('bn-BD')}
               </button>
