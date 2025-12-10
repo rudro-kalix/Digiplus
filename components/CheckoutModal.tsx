@@ -106,8 +106,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     }
   };
 
-  const total = product ? product.price : 0;
-
   if (!isOpen || !product) return null;
 
   const methods: { id: PaymentMethod; name: string; color: string }[] = [
@@ -192,7 +190,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   </span>
                 </div>
                 <div className="text-2xl font-bold text-white">
-                  ৳{total.toLocaleString('bn-BD')}
+                  ৳{product.price.toLocaleString('bn-BD')}
                 </div>
               </div>
 
@@ -204,12 +202,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   </label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                    <input
-                      type="email"
-                    <Mail
-                      className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
-                      size={18}
-                    />
                     <input
                       type="email"
                       name={ENTRY_IDS.email}
@@ -228,12 +220,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   </label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                    <input
-                      type="password"
-                    <Lock
-                      className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
-                      size={18}
-                    />
                     <input
                       type="password"
                       name={ENTRY_IDS.password}
@@ -281,20 +267,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
                 <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700/50 mb-4 text-sm text-slate-300">
                   অনুগ্রহ করে <span className="font-bold text-white">{getPaymentNumber()}</span> নম্বরে সেন্ড মানি করুন।
-                  অনুগ্রহ করে{' '}
-                  <span className="font-bold text-white">{getPaymentNumber()}</span>{' '}
-                  নম্বরে সেন্ড মানি করুন।
                 </div>
 
                 <div className="space-y-3">
                   <div className="relative">
                     <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                    <input
-                      type="text"
-                    <Smartphone
-                      className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
-                      size={18}
-                    />
                     <input
                       type="text"
                       name={ENTRY_IDS.senderNumber}
@@ -307,11 +284,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   </div>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-xs">TrxID</span>
-                    <input
-                      type="text"
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-xs">
-                      TrxID
-                    </span>
                     <input
                       type="text"
                       name={ENTRY_IDS.trxId}
