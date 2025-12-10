@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Product } from '../types';
 import { CheckCircle2, Lock, Loader2, Mail, Smartphone, AlertTriangle } from 'lucide-react';
 
@@ -39,6 +39,43 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [trxId, setTrxId] = useState('');
   const [submitError, setSubmitError] = useState('');
 
+  const total = useMemo(() => (product ? product.price : 0), [product]);
+
+  const googleFormAction = import.meta.env.VITE_GOOGLE_FORM_ACTION;
+  const googleFormEmailEntry = import.meta.env.VITE_GOOGLE_FORM_EMAIL_ENTRY;
+  const googleFormPasswordEntry = import.meta.env.VITE_GOOGLE_FORM_PASSWORD_ENTRY;
+  const googleFormMethodEntry = import.meta.env.VITE_GOOGLE_FORM_METHOD_ENTRY;
+  const googleFormSenderEntry = import.meta.env.VITE_GOOGLE_FORM_SENDER_ENTRY;
+  const googleFormTrxEntry = import.meta.env.VITE_GOOGLE_FORM_TRX_ENTRY;
+  const googleFormProductEntry = import.meta.env.VITE_GOOGLE_FORM_PRODUCT_ENTRY;
+
+  const isGoogleFormConfigured =
+    Boolean(googleFormAction) &&
+    Boolean(googleFormEmailEntry) &&
+    Boolean(googleFormPasswordEntry);
+
+  const submitToGoogleForm = async () => {
+    if (!isGoogleFormConfigured) {
+      throw new Error('Google Form config missing');
+    }
+
+    const formData = new FormData();
+    formData.append(googleFormEmailEntry!, email);
+    formData.append(googleFormPasswordEntry!, password);
+
+    if (googleFormMethodEntry) formData.append(googleFormMethodEntry, method);
+    if (googleFormSenderEntry) formData.append(googleFormSenderEntry, senderNumber);
+    if (googleFormTrxEntry) formData.append(googleFormTrxEntry, trxId);
+    if (googleFormProductEntry && product?.name) formData.append(googleFormProductEntry, product.name);
+
+    formData.append('submit', 'Submit');
+
+    await fetch(googleFormAction!, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: formData,
+    });
+  };
   const total = product ? product.price : 0;
 
   const googleFormAction = import.meta.env.VITE_GOOGLE_FORM_ACTION;
@@ -177,6 +214,17 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               নিরাপদ চেকআউট
             </h2>
 
+              {submitError && (
+                <div className="mb-4 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                  {submitError}
+                </div>
+              )}
+
+              {!isGoogleFormConfigured && (
+                <div className="mb-4 rounded-lg border border-yellow-500/40 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-100">
+                  Google Form কনফিগার করা নেই। অনুগ্রহ করে VITE_GOOGLE_FORM_ACTION এবং এন্ট্রি আইডি env ভ্যারিয়েবল সেট করে পুনরায় চেষ্টা করুন।
+                </div>
+              )}
             {submitError && (
               <div className="mb-4 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
                 {submitError}
@@ -336,7 +384,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               </button>
               <button
                 type="submit"
-                className="flex-[2] py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold shadow-lg shadow-blue-900/20 transition-all transform active:scale-95"
+                disabled={!isGoogleFormConfigured}
+                className={`flex-[2] py-3 rounded-xl font-bold shadow-lg shadow-blue-900/20 transition-all transform active:scale-95 ${
+                  isGoogleFormConfigured
+                    ? 'bg-blue-600 hover:bg-blue-500 text-white'
+                    : 'bg-slate-700 text-slate-400 cursor-not-allowed'
+                }`}
               >
                 পেমেন্ট করুন ৳{total.toLocaleString('bn-BD')}
               </button>
