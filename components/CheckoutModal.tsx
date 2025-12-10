@@ -31,7 +31,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   isOpen, 
   onClose, 
   product,
-  onSuccess
+  onSuccess,
 }) => {
   const [step, setStep] = useState<'details' | 'processing' | 'success'>('details');
   const [email, setEmail] = useState('');
@@ -85,6 +85,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       setSubmitError('গুগল ফর্ম কনফিগার করা নেই। সঠিক লিংক ও এন্ট্রি আইডি সেট করুন।');
       return;
     }
+
+    setStep('processing');
+    setSubmitError('');
+
+    try {
+      await submitToGoogleForm();
 
     setStep('processing');
     setSubmitError('');
@@ -176,6 +182,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <label className="block text-slate-400 text-sm font-medium mb-2">আপনার জিমেইল (Gmail)</label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                    <input
+                      type="email"
+                      required
                     <input 
                       type="email" 
                       name={ENTRY_IDS.email}
@@ -192,6 +201,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <label className="block text-slate-400 text-sm font-medium mb-2">অ্যাকাউন্ট পাসওয়ার্ড</label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                    <input
+                      type="password"
+                      required
                     <input 
                       type="password" 
                       name={ENTRY_IDS.password}
@@ -205,7 +217,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mt-3 flex gap-2">
                     <AlertTriangle className="text-yellow-500 shrink-0" size={16} />
                     <p className="text-xs text-yellow-200/80 leading-relaxed">
-                       পার্সোনাল অ্যাকাউন্টে সাবস্ক্রিপশন চালু করার জন্য আমাদের লগইন এক্সেস প্রয়োজন। আপনার তথ্য সম্পূর্ণ সুরক্ষিত থাকবে এবং শুধুমাত্র আপগ্রেডের কাজেই ব্যবহৃত হবে। কাজ শেষে আপনি পাসওয়ার্ড পরিবর্তন করে নিতে পারবেন।
+                      পার্সোনাল অ্যাকাউন্টে সাবস্ক্রিপশন চালু করার জন্য আমাদের লগইন এক্সেস প্রয়োজন। আপনার তথ্য সম্পূর্ণ সুরক্ষিত থাকবে এবং শুধুমাত্র আপগ্রেডের কাজেই ব্যবহৃত হবে। কাজ শেষে আপনি পাসওয়ার্ড পরিবর্তন করে নিতে পারবেন।
                     </p>
                   </div>
                 </div>
@@ -228,10 +240,32 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 </div>
 
                 <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700/50 mb-4 text-sm text-slate-300">
-                   অনুগ্রহ করে <span className="font-bold text-white">{getPaymentNumber()}</span> নম্বরে সেন্ড মানি করুন।
+                  অনুগ্রহ করে <span className="font-bold text-white">{getPaymentNumber()}</span> নম্বরে সেন্ড মানি করুন।
                 </div>
 
                 <div className="space-y-3">
+                  <div className="relative">
+                    <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                    <input
+                      type="text"
+                      required
+                      value={senderNumber}
+                      onChange={(e) => setSenderNumber(e.target.value)}
+                      placeholder="যে নম্বর থেকে টাকা পাঠিয়েছেন"
+                      className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 transition-all"
+                    />
+                  </div>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-xs">TrxID</span>
+                    <input
+                      type="text"
+                      required
+                      value={trxId}
+                      onChange={(e) => setTrxId(e.target.value)}
+                      placeholder="ট্রানজ্যাকশন আইডি (TrxID)"
+                      className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 transition-all"
+                    />
+                  </div>
                     <div className="relative">
                         <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                         <input 
@@ -261,14 +295,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             </div>
 
             <div className="flex gap-3">
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={onClose}
                 className="flex-1 py-3 text-slate-400 hover:text-white font-medium transition-colors"
               >
                 বাতিল
               </button>
-              <button 
+              <button
                 type="submit"
                 className="flex-[2] py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold shadow-lg shadow-blue-900/20 transition-all transform active:scale-95"
               >
