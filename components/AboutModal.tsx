@@ -44,7 +44,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
               </div>
               <div className="text-center">
                 <h3 className="text-xl font-bold text-white">Md. Julkar Nayen</h3>
-                <p className="text-blue-400 text-sm">Software Engineer Student</p>
+                <p className="text-blue-400 text-sm">Software Engineering Student</p>
               </div>
             </div>
 
