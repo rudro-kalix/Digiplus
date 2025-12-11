@@ -35,8 +35,11 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
               <div className="w-48 h-48 rounded-full p-1 bg-gradient-to-tr from-blue-500 to-purple-500 shadow-xl shrink-0">
                 <div className="w-full h-full rounded-full overflow-hidden border-4 border-slate-900 bg-slate-800 relative group">
                   <img 
-                    src="https://drive.google.com/file/d/1uE_oDy_rblk7lsT6LClSMrYc6gXtaP-C/view?usp=sharing" 
+                    src="https://drive.google.com/uc?export=view&id=1uE_oDy_rblk7lsT6LClSMrYc6gXtaP-C" 
                     alt="Profile"
+                    onError={(e) => {
+                      e.currentTarget.src = "https://ui-avatars.com/api/?name=Julkar+Nayen&background=0f172a&color=38bdf8&size=200";
+                    }}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                 </div>
@@ -93,7 +96,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
             </h4>
             <div className="rounded-xl overflow-hidden border border-slate-700 shadow-2xl bg-slate-800 hover:border-slate-600 transition-all">
               <img 
-                src="https://drive.google.com/file/d/147d5FeHQwkwXCFlkYpYvwHR3-B25Br8A/view?usp=sharing" 
+                src="https://drive.google.com/uc?export=view&id=147d5FeHQwkwXCFlkYpYvwHR3-B25Br8A" 
                 alt="University ID Card"
                 className="w-full h-auto object-contain block"
               />
