@@ -96,7 +96,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
             </h4>
             <div className="rounded-xl overflow-hidden border border-slate-700 shadow-2xl bg-slate-800 hover:border-slate-600 transition-all">
               <img 
-                src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg5qb91LaCHArbWQpnvoXChYWYTMGSnJa6ER1yZeBGFTDMs7Et-Nhy_U6r6wMF-mX-Yzs9wQ-ynPuUMXyxidr1v0VPZXY6V4VLxQJd-xFD5UZhLm8_iKi8RUpS0W4NBEnjAWoj_KliKjeXTtXVyG1II404AGB8nby4GJGdkgVy5kXvNofLxOo-OlvYO_wqB/s320/Screenshot_20251209-234114.png" 
+                src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg5qb91LaCHArbWQpnvoXChYWYTMGSnJa6ER1yZeBGFTDMs7Et-Nhy_U6r6wMF-mX-Yzs9wQ-ynPuUMXyxidr1v0VPZXY6V4VLxQJd-xFD5UZhLm8_iKi8RUpS0W4NBEnjAWoj_KliKjeXTtXVyG1II404AGB8nby4GJGdkgVy5kXvNofLxOo-OlvYO_wqB/s1080/Screenshot_20251209-234114.png" 
                 alt="University ID Card"
                 className="w-full h-auto object-contain block"
               />
