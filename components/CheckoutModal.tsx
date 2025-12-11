@@ -12,11 +12,7 @@ interface CheckoutModalProps {
 type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay';
 type CheckoutStep = 'notice' | 'details' | 'whatsapp' | 'processing' | 'success';
 
-// 🔴 IMPORTANT: YOUR URL IS LIKELY INCORRECT
-// 1. Go to your Google Form -> Click the "Eye" icon (Preview).
-// 2. The URL in browser will be: https://docs.google.com/forms/d/e/1FAIpQLS..../viewform
-// 3. Replace 'viewform' with 'formResponse'
-// 4. The ID usually starts with "1FAIpQL..." (NOT "1HIg...")
+
 const GOOGLE_FORM_ACTION_URL =
   'https://docs.google.com/forms/d/e/1FAIpQLSeilqD7cVCR-Knafxicf3iQy-a3xt6N5W0JFS6zdvPtDzXF2g/formResponse';
 
@@ -296,7 +292,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 type="submit"
                 className="flex-[2] py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold shadow-lg shadow-blue-900/20 transition-all transform active:scale-95"
               >
-                পরবর্তী ধাপ
+               কনফার্ম করুন  ৳{total.toLocaleString('bn-BD')}
               </button>
             </div>
           </form>
@@ -316,7 +312,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               যোগাযোগের তথ্য
             </h2>
             <p className="text-slate-400 text-center mb-8 text-sm">
-              অর্ডার পরবর্তী যোগাযোগের জন্য আপনার WhatsApp নম্বরটি দিন।
+              যোগাযোগের জন্য আপনার WhatsApp নম্বরটি দিন।
             </p>
 
             <div className="mb-8">
@@ -340,7 +336,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               type="submit"
               className="w-full py-3.5 bg-green-600 hover:bg-green-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-green-900/20 hover:shadow-green-900/40 hover:-translate-y-0.5 mb-3"
             >
-              অর্ডার সম্পন্ন করুন ৳{total.toLocaleString('bn-BD')}
+              অর্ডার সম্পন্ন করুন 
             </button>
             
             <button
