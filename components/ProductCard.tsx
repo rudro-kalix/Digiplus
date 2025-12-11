@@ -64,7 +64,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onBuyNow }) =
             : 'bg-slate-700 hover:bg-slate-600 text-white'}`}
       >
         <Zap size={18} />
-        এখনই কিনুন
+        Buy Now
       </button>
     </div>
   );
