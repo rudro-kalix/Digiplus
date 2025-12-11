@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Product } from '../types';
-import { CheckCircle2, Lock, Loader2, Mail, Smartphone, AlertTriangle } from 'lucide-react';
+import { CheckCircle2, Lock, Loader2, Mail, Smartphone, AlertTriangle, ShieldAlert, ArrowRight } from 'lucide-react';
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -10,6 +10,7 @@ interface CheckoutModalProps {
 }
 
 type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay';
+type CheckoutStep = 'notice' | 'details' | 'processing' | 'success';
 
 // 🔴 IMPORTANT: YOUR URL IS LIKELY INCORRECT
 // 1. Go to your Google Form -> Click the "Eye" icon (Preview).
@@ -34,12 +35,19 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   product,
   onSuccess,
 }) => {
-  const [step, setStep] = useState<'details' | 'processing' | 'success'>('details');
+  const [step, setStep] = useState<CheckoutStep>('notice');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [method, setMethod] = useState<PaymentMethod>('bkash');
   const [senderNumber, setSenderNumber] = useState('');
   const [trxId, setTrxId] = useState('');
+
+  // Reset step to 'notice' every time modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setStep('notice');
+    }
+  }, [isOpen]);
 
   const total = product ? product.price : 0;
 
@@ -69,11 +77,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         setStep('success');
         setTimeout(() => {
           onSuccess();
-          setStep('details');
+          // Reset form
           setEmail('');
           setPassword('');
           setSenderNumber('');
           setTrxId('');
+          setStep('notice'); 
           onClose();
         }, 3000);
       }, 1000);
@@ -103,10 +112,52 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-slate-900 border border-slate-700 w-full max-w-md rounded-2xl overflow-hidden shadow-2xl relative max-h-[90vh] overflow-y-auto">
         
+        {/* Step 1: Important Notice */}
+        {step === 'notice' && (
+          <div className="p-8">
+            <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mb-6 mx-auto">
+              <ShieldAlert size={32} className="text-blue-500" />
+            </div>
+            
+            <h2 className="text-2xl font-bold text-white mb-6 text-center">
+              অর্ডারের পূর্বে গুরুত্বপূর্ণ তথ্য
+            </h2>
+
+            <div className="space-y-5 text-slate-300 text-sm leading-relaxed mb-8 bg-slate-800/50 p-5 rounded-xl border border-slate-700">
+              <p>
+                <strong className="text-white block mb-2 font-semibold">কেন লগইন তথ্য প্রয়োজন?</strong>
+                এই ধরনের পুরোপুরি পার্সোনাল সাবস্ক্রিপশন কোনো ধরনের শেয়ার অ্যাকসেস, টিম ইনভাইট, বা লিংক দিয়ে অ্যাক্টিভেশন সম্ভব নয়। এটি আপনার Gmail অ্যাকাউন্ট এর মাধমে সরাসরি ChatGPT আকাউন্ট অ্যাক্টিভেট করতে হয়। তাই অ্যাক্টিভেশনের সময় Gmail–এ লগইন প্রয়োজন হয়, আপনার দেওয়া অ্যাকাউন্টে প্রবেশ করা ছাড়া অ্যাক্টিভেশন সম্ভব নয়।
+              </p>
+              
+              <div className="bg-blue-500/10 border border-blue-500/20 p-4 rounded-lg">
+                <strong className="text-blue-400 block mb-2 font-semibold">👉 আপনার প্রাইভেসি সুরক্ষার জন্য :</strong>
+                <p className="text-blue-100/90">
+                  শুধু এই সাবস্ক্রিপশনের জন্য আলাদা নতুন Gmail খুলে দিন—এতে সম্পূর্ণ নিরাপদ লেনদেন সফল হবে । অ্যাক্টিভেশন শেষ হলে আপনি পাসওয়ার্ড পরিবর্তন করে নিবেন।
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setStep('details')}
+              className="w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-900/20 hover:shadow-blue-900/40 hover:-translate-y-0.5"
+            >
+              আমি বুঝতে পেরেছি, পরবর্তী ধাপ <ArrowRight size={18} />
+            </button>
+            
+            <button
+              onClick={onClose}
+              className="w-full py-3 mt-3 text-slate-500 hover:text-white font-medium transition-colors text-sm"
+            >
+              ফিরে যান
+            </button>
+          </div>
+        )}
+
+        {/* Step 2: Details Form */}
         {step === 'details' && (
           <form
             onSubmit={handleSubmit}
-            className="p-8"
+            className="p-8 animate-in fade-in slide-in-from-right-4 duration-300"
           >
             <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
               <Lock className="text-green-500" size={24} />
@@ -163,7 +214,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mt-3 flex gap-2">
                     <AlertTriangle className="text-yellow-500 shrink-0" size={16} />
                     <p className="text-xs text-yellow-200/80 leading-relaxed">
-                      পার্সোনাল অ্যাকাউন্টে সাবস্ক্রিপশন চালু করার জন্য আমাদের লগইন এক্সেস প্রয়োজন। আপনার তথ্য সম্পূর্ণ সুরক্ষিত থাকবে এবং শুধুমাত্র আপগ্রেডের কাজেই ব্যবহৃত হবে। কাজ শেষে আপনি পাসওয়ার্ড পরিবর্তন করে নিতে পারবেন।
+                      লগইন তথ্য শুধুমাত্র একবার অ্যাক্টিভেশনের জন্য ব্যবহৃত হবে।
                     </p>
                   </div>
                 </div>
@@ -225,23 +276,23 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             <div className="flex gap-3">
               <button
                 type="button"
-                onClick={onClose}
+                onClick={() => setStep('notice')}
                 className="flex-1 py-3 text-slate-400 hover:text-white font-medium transition-colors"
               >
-                বাতিল
+                পেছনে যান
               </button>
               <button
                 type="submit"
                 className="flex-[2] py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold shadow-lg shadow-blue-900/20 transition-all transform active:scale-95"
               >
-                পেমেন্ট করুন ৳{total.toLocaleString('bn-BD')}
+                কনফার্ম করুন ৳{total.toLocaleString('bn-BD')}
               </button>
             </div>
           </form>
         )}
 
         {step === 'processing' && (
-          <div className="p-12 flex flex-col items-center justify-center text-center">
+          <div className="p-12 flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-300">
             <Loader2 size={48} className="text-blue-500 animate-spin mb-4" />
             <h3 className="text-xl font-semibold text-white mb-2">
               তথ্য যাচাই করা হচ্ছে
@@ -253,12 +304,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         )}
 
         {step === 'success' && (
-          <div className="p-12 flex flex-col items-center justify-center text-center">
+          <div className="p-12 flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-300">
             <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-6">
               <CheckCircle2 size={32} className="text-green-500" />
             </div>
             <h3 className="text-2xl font-bold text-white mb-2">
-              অর্ডার সফল হয়েছে!
+              অর্ডারের সফল হয়েছে!
             </h3>
             <p className="text-slate-400 mb-6">
               শিগগিরই আপনার অ্যাকাউন্টে সাবস্ক্রিপশন চালু করে ইমেইল কনফার্মেশন
