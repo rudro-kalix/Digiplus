@@ -30,7 +30,7 @@ const App: React.FC = () => {
           <div className="flex items-center gap-2">
             {/* Logo Image - Replace src with your own logo URL */}
             <img 
-              src="https://placehold.co/100x100/3b82f6/ffffff?text=Logo" 
+              src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEheZev5YSTOyU2yi6SGj8lDqhLjc1fd8Rg5Uj4WQyf3VzGLV0flHrNIW0E6Rl3sHXGdAuJsqZSXL86N8PsKaiYacp6WRWOBKFXu0n9vtxKSWdUPtyXGnhYiwj2zkbDwceAk53wsnjvUnFNnNOhgOXb9OOsYvpnaJ6cqwGFuc0Bf9567S_aRQj6gG4uCQwxf/s320/photo_2025-12-11_21-45-07.jpg" 
               alt="DigiPlus Logo" 
               className="w-10 h-10 rounded-lg shadow-lg shadow-blue-500/20 object-cover"
             />
