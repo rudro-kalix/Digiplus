@@ -58,10 +58,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onBuyNow }) =
 
       <button
         onClick={() => onBuyNow(product)}
-        className={`w-full py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-200 
-          ${product.popular 
-            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-900/20' 
-            : 'bg-slate-700 hover:bg-slate-600 text-white'}`}
+        className="w-full py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-200 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-900/20 hover:shadow-blue-900/40 hover:-translate-y-0.5 active:translate-y-0"
       >
         <Zap size={18} />
         Buy Now
