@@ -35,7 +35,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
               <div className="w-48 h-48 rounded-full p-1 bg-gradient-to-tr from-blue-500 to-purple-500 shadow-xl shrink-0">
                 <div className="w-full h-full rounded-full overflow-hidden border-4 border-slate-900 bg-slate-800 relative group">
                   <img 
-                    src="https://drive.google.com/uc?export=view&id=1uE_oDy_rblk7lsT6LClSMrYc6gXtaP-C" 
+                    src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjvmp1ZcfA5npEtjjzS_k976gyZ7bcpptTNjmgqo0JTT8y_tmk2s_HxsC3u25crT5OW2ZaulKP3xF4U5jND_iPO4iZcbX3j_iSZxuY8EZloovlaKVr_TVx760SXLZnHVyjft0JjX0y0tAEQE56u57aLFtVRqdvI0XlER8vVM8x8CfjeomSCLtk2HcWMZnJh/s1280/photo_2025-12-09_23-43-17.jpg" 
                     alt="Profile"
                     onError={(e) => {
                       e.currentTarget.src = "https://ui-avatars.com/api/?name=Julkar+Nayen&background=0f172a&color=38bdf8&size=200";
@@ -96,7 +96,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
             </h4>
             <div className="rounded-xl overflow-hidden border border-slate-700 shadow-2xl bg-slate-800 hover:border-slate-600 transition-all">
               <img 
-                src="https://drive.google.com/uc?export=view&id=147d5FeHQwkwXCFlkYpYvwHR3-B25Br8A" 
+                src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg5qb91LaCHArbWQpnvoXChYWYTMGSnJa6ER1yZeBGFTDMs7Et-Nhy_U6r6wMF-mX-Yzs9wQ-ynPuUMXyxidr1v0VPZXY6V4VLxQJd-xFD5UZhLm8_iKi8RUpS0W4NBEnjAWoj_KliKjeXTtXVyG1II404AGB8nby4GJGdkgVy5kXvNofLxOo-OlvYO_wqB/s320/Screenshot_20251209-234114.png" 
                 alt="University ID Card"
                 className="w-full h-auto object-contain block"
               />
