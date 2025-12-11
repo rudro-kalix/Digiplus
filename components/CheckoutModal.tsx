@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Product } from '../types';
-import { CheckCircle2, Lock, Loader2, Mail, Smartphone, AlertTriangle, ShieldAlert, ArrowRight } from 'lucide-react';
+import { CheckCircle2, Lock, Loader2, Mail, Smartphone, AlertTriangle, ShieldAlert, ArrowRight, MessageCircle } from 'lucide-react';
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -10,7 +10,7 @@ interface CheckoutModalProps {
 }
 
 type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay';
-type CheckoutStep = 'notice' | 'details' | 'processing' | 'success';
+type CheckoutStep = 'notice' | 'details' | 'whatsapp' | 'processing' | 'success';
 
 // 🔴 IMPORTANT: YOUR URL IS LIKELY INCORRECT
 // 1. Go to your Google Form -> Click the "Eye" icon (Preview).
@@ -41,17 +41,24 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [method, setMethod] = useState<PaymentMethod>('bkash');
   const [senderNumber, setSenderNumber] = useState('');
   const [trxId, setTrxId] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
 
   // Reset step to 'notice' every time modal opens
   useEffect(() => {
     if (isOpen) {
       setStep('notice');
+      setWhatsapp(''); // Reset whatsapp on open
     }
   }, [isOpen]);
 
   const total = product ? product.price : 0;
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleDetailsSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setStep('whatsapp');
+  };
+
+  const handleFinalSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Stop the form from reloading the page
     setStep('processing');
 
@@ -61,7 +68,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     formData.append(ENTRY_IDS.password, password);
     formData.append(ENTRY_IDS.productName, product?.name || '');
     formData.append(ENTRY_IDS.paymentMethod, method);
-    formData.append(ENTRY_IDS.senderNumber, senderNumber);
+    // Appending WhatsApp number to senderNumber field for visibility since no specific ID was provided
+    formData.append(ENTRY_IDS.senderNumber, `${senderNumber} (WA: ${whatsapp})`);
     formData.append(ENTRY_IDS.trxId, trxId);
 
     try {
@@ -75,23 +83,25 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       // Show success after a short delay
       setTimeout(() => {
         setStep('success');
-        setTimeout(() => {
-          onSuccess();
-          // Reset form
-          setEmail('');
-          setPassword('');
-          setSenderNumber('');
-          setTrxId('');
-          setStep('notice'); 
-          onClose();
-        }, 3000);
       }, 1000);
 
     } catch (error) {
       console.error("Form submission error:", error);
       alert("দুঃখিত, সাবমিশন ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।");
-      setStep('details');
+      setStep('whatsapp');
     }
+  };
+
+  const handleCloseSuccess = () => {
+    onSuccess();
+    // Reset form
+    setEmail('');
+    setPassword('');
+    setSenderNumber('');
+    setTrxId('');
+    setWhatsapp('');
+    setStep('notice'); 
+    onClose();
   };
 
   if (!isOpen || !product) return null;
@@ -156,7 +166,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         {/* Step 2: Details Form */}
         {step === 'details' && (
           <form
-            onSubmit={handleSubmit}
+            onSubmit={handleDetailsSubmit}
             className="p-8 animate-in fade-in slide-in-from-right-4 duration-300"
           >
             <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
@@ -285,9 +295,60 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 type="submit"
                 className="flex-[2] py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold shadow-lg shadow-blue-900/20 transition-all transform active:scale-95"
               >
-                কনফার্ম করুন ৳{total.toLocaleString('bn-BD')}
+                পরবর্তী ধাপ
               </button>
             </div>
+          </form>
+        )}
+
+        {/* Step 3: WhatsApp Number */}
+        {step === 'whatsapp' && (
+          <form 
+            onSubmit={handleFinalSubmit}
+            className="p-8 animate-in fade-in slide-in-from-right-4 duration-300"
+          >
+            <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-6 mx-auto">
+              <MessageCircle size={32} className="text-green-500" />
+            </div>
+            
+            <h2 className="text-2xl font-bold text-white mb-2 text-center">
+              যোগাযোগের তথ্য
+            </h2>
+            <p className="text-slate-400 text-center mb-8 text-sm">
+              অর্ডার পরবর্তী যোগাযোগের জন্য আপনার WhatsApp নম্বরটি দিন।
+            </p>
+
+            <div className="mb-8">
+              <label className="block text-slate-400 text-sm font-medium mb-2">
+                WhatsApp নম্বর
+              </label>
+              <div className="relative">
+                <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                <input
+                  type="tel"
+                  required
+                  value={whatsapp}
+                  onChange={(e) => setWhatsapp(e.target.value)}
+                  placeholder="01xxxxxxxxx"
+                  className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-3.5 bg-green-600 hover:bg-green-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-green-900/20 hover:shadow-green-900/40 hover:-translate-y-0.5 mb-3"
+            >
+              অর্ডার সম্পন্ন করুন ৳{total.toLocaleString('bn-BD')}
+            </button>
+            
+            <button
+              type="button"
+              onClick={() => setStep('details')}
+              className="w-full py-3 text-slate-500 hover:text-white font-medium transition-colors text-sm"
+            >
+              পেছনে যান
+            </button>
           </form>
         )}
 
@@ -308,14 +369,21 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-6">
               <CheckCircle2 size={32} className="text-green-500" />
             </div>
-            <h3 className="text-2xl font-bold text-white mb-2">
-              অর্ডারের সফল হয়েছে!
+            <h3 className="text-2xl font-bold text-white mb-4">
+              অর্ডার সফল হয়েছে!
             </h3>
-            <p className="text-slate-400 mb-6">
-              শিগগিরই আপনার অ্যাকাউন্টে সাবস্ক্রিপশন চালু করে ইমেইল কনফার্মেশন
-              পাঠানো হবে।
-            </p>
-            <p className="text-xs text-slate-600">উইন্ডোটি বন্ধ হচ্ছে...</p>
+            <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700 mb-6">
+              <p className="text-slate-300 text-sm leading-relaxed">
+                আমাদের একজন অ্যাডমিন কিছুক্ষণের মধ্যে আপনার সাথে <strong className="text-green-400">WhatsApp</strong>-এ যোগাযোগ করবেন। অনুগ্রহ করে তাকে সহযোগিতা করুন।
+              </p>
+            </div>
+            
+            <button
+              onClick={handleCloseSuccess}
+              className="px-8 py-3 bg-green-600 hover:bg-green-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-green-900/20 hover:shadow-green-900/40 hover:-translate-y-0.5"
+            >
+              ঠিক আছে
+            </button>
           </div>
         )}
       </div>
