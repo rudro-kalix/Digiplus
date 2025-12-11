@@ -21,12 +21,13 @@ const GOOGLE_FORM_ACTION_URL =
   'https://docs.google.com/forms/d/e/1FAIpQLSeilqD7cVCR-Knafxicf3iQy-a3xt6N5W0JFS6zdvPtDzXF2g/formResponse';
 
 const ENTRY_IDS = {
-  email: 'entry.1148372080',        // Gmail Entry ID
-  password: 'entry.169384476',      // Password Entry ID
-  productName: 'entry.1051188277',  // Product Name Entry ID
-  paymentMethod: 'entry.124185842', // Payment Method Entry ID
-  senderNumber: 'entry.1348474470', // Sender Number Entry ID
-  trxId: 'entry.614038957',         // TrxID Entry ID
+  email: 'entry.1148372080',     
+  password: 'entry.169384476',     
+  productName: 'entry.1051188277',  
+  paymentMethod: 'entry.124185842', 
+  senderNumber: 'entry.1348474470', 
+  trxId: 'entry.614038957',        
+  whatsapp: 'entry.2104426818',    
 };
 
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({
@@ -68,9 +69,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     formData.append(ENTRY_IDS.password, password);
     formData.append(ENTRY_IDS.productName, product?.name || '');
     formData.append(ENTRY_IDS.paymentMethod, method);
-    // Appending WhatsApp number to senderNumber field for visibility since no specific ID was provided
-    formData.append(ENTRY_IDS.senderNumber, `${senderNumber} (WA: ${whatsapp})`);
+    formData.append(ENTRY_IDS.senderNumber, senderNumber);
     formData.append(ENTRY_IDS.trxId, trxId);
+    formData.append(ENTRY_IDS.whatsapp, whatsapp);
 
     try {
       // Use fetch with 'no-cors' mode to send data to Google Forms

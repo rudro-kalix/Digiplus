@@ -28,9 +28,12 @@ const App: React.FC = () => {
       <nav className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-tr from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20">
-              D
-            </div>
+            {/* Logo Image - Replace src with your own logo URL */}
+            <img 
+              src="https://placehold.co/100x100/3b82f6/ffffff?text=Logo" 
+              alt="DigiPlus Logo" 
+              className="w-10 h-10 rounded-lg shadow-lg shadow-blue-500/20 object-cover"
+            />
             <span className="text-xl font-bold text-white tracking-tight">DigiPlus</span>
           </div>
 
