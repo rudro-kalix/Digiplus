@@ -10,7 +10,7 @@ interface CheckoutModalProps {
 }
 
 type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay';
-type CheckoutStep = 'notice' | 'details' | 'whatsapp' | 'processing' | 'success';
+type CheckoutStep = 'notice' | 'details' | 'processing' | 'success';
 
 // OPTIONAL: To receive orders via Email automatically:
 // 1. Go to https://www.emailjs.com/ (It's free)
@@ -35,25 +35,22 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [method, setMethod] = useState<PaymentMethod>('bkash');
   const [senderNumber, setSenderNumber] = useState('');
   const [trxId, setTrxId] = useState('');
-  const [whatsapp, setWhatsapp] = useState('');
 
   // Reset step to 'notice' every time modal opens
   useEffect(() => {
     if (isOpen) {
       setStep('notice');
-      setWhatsapp('');
+      setEmail('');
+      setPassword('');
+      setSenderNumber('');
+      setTrxId('');
     }
   }, [isOpen]);
 
   const total = product ? product.price : 0;
   const adminNumber = '8801607656890'; // Your WhatsApp Number
 
-  const handleDetailsSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setStep('whatsapp');
-  };
-
-  const handleFinalSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleOrderSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStep('processing');
 
@@ -72,7 +69,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             method: method,
             sender: senderNumber,
             trx: trxId,
-            whatsapp: whatsapp
           }
         };
 
@@ -100,7 +96,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     setPassword('');
     setSenderNumber('');
     setTrxId('');
-    setWhatsapp('');
     setStep('notice'); 
     onClose();
   };
@@ -118,7 +113,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 💳 *Method:* ${method.toUpperCase()}
 📱 *Sender:* ${senderNumber}
 🆔 *TrxID:* ${trxId}
-📞 *Contact:* ${whatsapp}
     `.trim();
     
     return `https://wa.me/${adminNumber}?text=${encodeURIComponent(text)}`;
@@ -186,7 +180,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         {/* Step 2: Details Form */}
         {step === 'details' && (
           <form
-            onSubmit={handleDetailsSubmit}
+            onSubmit={handleOrderSubmit}
             className="p-8 animate-in fade-in slide-in-from-right-4 duration-300"
           >
             <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
@@ -307,62 +301,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               </button>
               <button
                 type="submit"
-                className="flex-[2] py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold shadow-lg shadow-blue-900/20 transition-all transform active:scale-95"
+                className="flex-[2] py-3 bg-green-600 hover:bg-green-500 text-white rounded-xl font-bold shadow-lg shadow-green-900/20 transition-all transform active:scale-95"
               >
-                পরবর্তী ধাপ
+                অর্ডার সম্পন্ন করুন ৳{total.toLocaleString('bn-BD')}
               </button>
             </div>
-          </form>
-        )}
-
-        {/* Step 3: WhatsApp Number */}
-        {step === 'whatsapp' && (
-          <form 
-            onSubmit={handleFinalSubmit}
-            className="p-8 animate-in fade-in slide-in-from-right-4 duration-300"
-          >
-            <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-6 mx-auto">
-              <MessageCircle size={32} className="text-green-500" />
-            </div>
-            
-            <h2 className="text-2xl font-bold text-white mb-2 text-center">
-              যোগাযোগের তথ্য
-            </h2>
-            <p className="text-slate-400 text-center mb-8 text-sm">
-              অর্ডার পরবর্তী যোগাযোগের জন্য আপনার WhatsApp নম্বরটি দিন।
-            </p>
-
-            <div className="mb-8">
-              <label className="block text-slate-400 text-sm font-medium mb-2">
-                WhatsApp নম্বর
-              </label>
-              <div className="relative">
-                <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                <input
-                  type="tel"
-                  required
-                  value={whatsapp}
-                  onChange={(e) => setWhatsapp(e.target.value)}
-                  placeholder="01xxxxxxxxx"
-                  className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-green-500 transition-all"
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-3.5 bg-green-600 hover:bg-green-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-green-900/20 hover:shadow-green-900/40 hover:-translate-y-0.5 mb-3"
-            >
-              নিশ্চিত করুন ৳{total.toLocaleString('bn-BD')}
-            </button>
-            
-            <button
-              type="button"
-              onClick={() => setStep('details')}
-              className="w-full py-3 text-slate-500 hover:text-white font-medium transition-colors text-sm"
-            >
-              পেছনে যান
-            </button>
           </form>
         )}
 
