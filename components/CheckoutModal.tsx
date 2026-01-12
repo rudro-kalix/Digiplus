@@ -102,7 +102,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
   const generateWhatsAppLink = () => {
     const text = `
-*নতুন অর্ডার এসেছে!* (DigiPlus)
+*নতুন অর্ডার* (DigiPlus)
 ------------------
 📦 *Product:* ${product?.name}
 💰 *Price:* ${product?.price} BDT
