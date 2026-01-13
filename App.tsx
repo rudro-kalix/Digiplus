@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { PRODUCTS } from './constants';
 import { ProductCard } from './components/ProductCard';
 import { CheckoutModal } from './components/CheckoutModal';
-import { SupportBot } from './components/SupportBot';
 import { AboutModal } from './components/AboutModal';
 import { OrderHistoryModal } from './components/OrderHistoryModal';
 import { Product } from './types';
@@ -168,8 +167,6 @@ const App: React.FC = () => {
         isOpen={isHistoryOpen}
         onClose={() => setIsHistoryOpen(false)}
       />
-
-      <SupportBot />
     </div>
   );
 };

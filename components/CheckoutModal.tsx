@@ -13,10 +13,12 @@ type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay';
 type CheckoutStep = 'notice' | 'details' | 'processing' | 'success';
 
 // Mock Coupons
+// EDIT HERE: Add your secret coupon codes below
 const VALID_COUPONS: Record<string, number> = {
   'DIGI20': 20,    // Flat 20 Taka off
   'NEW50': 50,     // Flat 50 Taka off
-  'PRO10': 10      // 10 Taka off
+  'PRO10': 10,     // 10 Taka off
+  'SECRET100': 100 // Secret code example
 };
 
 // OPTIONAL: EmailJS Config
@@ -244,38 +246,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 </div>
               </div>
 
-              {/* Coupon Section */}
-              <div>
-                 <label className="block text-slate-400 text-sm font-medium mb-2">
-                    কুপন কোড (যদি থাকে)
-                 </label>
-                 <div className="flex gap-2">
-                    <div className="relative flex-1">
-                        <Tag className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
-                        <input 
-                            type="text" 
-                            placeholder="যেমন: DIGI20"
-                            value={couponCode}
-                            onChange={(e) => setCouponCode(e.target.value)}
-                            className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-blue-500 uppercase"
-                        />
-                    </div>
-                    <button 
-                        type="button"
-                        onClick={handleApplyCoupon}
-                        className="px-4 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded-lg transition-colors"
-                    >
-                        Apply
-                    </button>
-                 </div>
-                 {couponMessage && (
-                    <p className={`text-xs mt-2 flex items-center gap-1 ${couponMessage.type === 'success' ? 'text-green-400' : 'text-red-400'}`}>
-                        {couponMessage.type === 'success' ? <Check size={12} /> : <AlertTriangle size={12} />}
-                        {couponMessage.text}
-                    </p>
-                 )}
-              </div>
-
               {/* Account Credentials Section */}
               <div className="space-y-3 pt-2">
                 <div>
@@ -363,6 +333,38 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     />
                   </div>
                 </div>
+              </div>
+
+              {/* Coupon Section - MOVED TO BOTTOM */}
+              <div className="pt-4 border-t border-slate-800">
+                 <label className="block text-slate-400 text-sm font-medium mb-2">
+                    কুপন কোড (যদি থাকে)
+                 </label>
+                 <div className="flex gap-2">
+                    <div className="relative flex-1">
+                        <Tag className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                        <input 
+                            type="text" 
+                            placeholder="যেমন: DIGI20"
+                            value={couponCode}
+                            onChange={(e) => setCouponCode(e.target.value)}
+                            className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-blue-500 uppercase"
+                        />
+                    </div>
+                    <button 
+                        type="button"
+                        onClick={handleApplyCoupon}
+                        className="px-4 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded-lg transition-colors"
+                    >
+                        Apply
+                    </button>
+                 </div>
+                 {couponMessage && (
+                    <p className={`text-xs mt-2 flex items-center gap-1 ${couponMessage.type === 'success' ? 'text-green-400' : 'text-red-400'}`}>
+                        {couponMessage.type === 'success' ? <Check size={12} /> : <AlertTriangle size={12} />}
+                        {couponMessage.text}
+                    </p>
+                 )}
               </div>
             </div>
 
