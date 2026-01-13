@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Product } from '../types';
-import { CheckCircle2, Lock, Loader2, Mail, Smartphone, AlertTriangle, ShieldAlert, ArrowRight, MessageCircle, Copy } from 'lucide-react';
+import { Product, Order } from '../types';
+import { CheckCircle2, Lock, Loader2, Mail, Smartphone, AlertTriangle, ShieldAlert, ArrowRight, MessageCircle, Tag, Check } from 'lucide-react';
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -12,15 +12,18 @@ interface CheckoutModalProps {
 type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay';
 type CheckoutStep = 'notice' | 'details' | 'processing' | 'success';
 
-// OPTIONAL: To receive orders via Email automatically:
-// 1. Go to https://www.emailjs.com/ (It's free)
-// 2. Create a service and template
-// 3. Paste your keys below.
-// If you leave these empty, the app will rely on the WhatsApp button.
+// Mock Coupons
+const VALID_COUPONS: Record<string, number> = {
+  'DIGI20': 20,    // Flat 20 Taka off
+  'NEW50': 50,     // Flat 50 Taka off
+  'PRO10': 10      // 10 Taka off
+};
+
+// OPTIONAL: EmailJS Config
 const EMAILJS_CONFIG = {
-  SERVICE_ID: '', // e.g. 'service_xyz'
-  TEMPLATE_ID: '', // e.g. 'template_abc'
-  PUBLIC_KEY: '',  // e.g. 'user_123'
+  SERVICE_ID: '', 
+  TEMPLATE_ID: '', 
+  PUBLIC_KEY: '',  
 };
 
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({
@@ -35,8 +38,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [method, setMethod] = useState<PaymentMethod>('bkash');
   const [senderNumber, setSenderNumber] = useState('');
   const [trxId, setTrxId] = useState('');
+  
+  // Coupon State
+  const [couponCode, setCouponCode] = useState('');
+  const [discount, setDiscount] = useState(0);
+  const [couponMessage, setCouponMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
 
-  // Reset step to 'notice' every time modal opens
   useEffect(() => {
     if (isOpen) {
       setStep('notice');
@@ -44,17 +51,50 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       setPassword('');
       setSenderNumber('');
       setTrxId('');
+      setCouponCode('');
+      setDiscount(0);
+      setCouponMessage(null);
     }
   }, [isOpen]);
 
-  const total = product ? product.price : 0;
-  const adminNumber = '8801607656890'; // Your WhatsApp Number
+  const basePrice = product ? product.price : 0;
+  const total = Math.max(0, basePrice - discount);
+  const adminNumber = '8801607656890';
+
+  const handleApplyCoupon = () => {
+    if (!couponCode) return;
+    const code = couponCode.toUpperCase().trim();
+    
+    if (VALID_COUPONS[code]) {
+      setDiscount(VALID_COUPONS[code]);
+      setCouponMessage({ type: 'success', text: `কুপন এপ্লাই করা হয়েছে! ৳${VALID_COUPONS[code]} ছাড়।` });
+    } else {
+      setDiscount(0);
+      setCouponMessage({ type: 'error', text: 'ভুল কুপন কোড।' });
+    }
+  };
 
   const handleOrderSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStep('processing');
 
-    // 1. Try to send via EmailJS (if configured)
+    // 1. Save to Local History
+    const newOrder: Order = {
+        id: Date.now().toString(),
+        date: new Date().toISOString(),
+        productName: product?.name || 'Unknown',
+        price: total,
+        status: 'Pending', // Default status
+        trxId: trxId
+    };
+
+    const existingHistory = localStorage.getItem('digisub_orders');
+    const history = existingHistory ? JSON.parse(existingHistory) : [];
+    history.push(newOrder);
+    localStorage.setItem('digisub_orders', JSON.stringify(history));
+
+
+    // 2. Try to send via EmailJS (if configured)
     if (EMAILJS_CONFIG.SERVICE_ID && EMAILJS_CONFIG.PUBLIC_KEY) {
       try {
         const data = {
@@ -63,12 +103,13 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           user_id: EMAILJS_CONFIG.PUBLIC_KEY,
           template_params: {
             product: product?.name,
-            price: product?.price,
+            price: total,
             email: email,
             password: password,
             method: method,
             sender: senderNumber,
             trx: trxId,
+            coupon: couponCode || 'N/A'
           }
         };
 
@@ -79,11 +120,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         });
       } catch (error) {
         console.error("EmailJS Failed:", error);
-        // Continue to success screen anyway, fallback to WhatsApp
       }
     }
 
-    // Simulate processing time then show success
     setTimeout(() => {
       setStep('success');
     }, 1500);
@@ -105,7 +144,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 *নতুন অর্ডার* (DigiPlus)
 ------------------
 📦 *Product:* ${product?.name}
-💰 *Price:* ${product?.price} BDT
+💰 *Total:* ${total} BDT ${discount > 0 ? `(Discount: ${discount})` : ''}
 ------------------
 📧 *Email:* ${email}
 🔑 *Pass:* ${password}
@@ -113,6 +152,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 💳 *Method:* ${method.toUpperCase()}
 📱 *Sender:* ${senderNumber}
 🆔 *TrxID:* ${trxId}
+🎫 *Coupon:* ${couponCode || 'N/A'}
     `.trim();
     
     return `https://wa.me/${adminNumber}?text=${encodeURIComponent(text)}`;
@@ -196,9 +236,44 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     {product.name}
                   </span>
                 </div>
-                <div className="text-2xl font-bold text-white">
-                  ৳{product.price.toLocaleString('bn-BD')}
+                <div className="text-2xl font-bold text-white flex gap-2 items-baseline">
+                  {discount > 0 && (
+                    <span className="text-lg text-slate-500 line-through decoration-red-500">৳{basePrice}</span>
+                  )}
+                  <span>৳{total.toLocaleString('bn-BD')}</span>
                 </div>
+              </div>
+
+              {/* Coupon Section */}
+              <div>
+                 <label className="block text-slate-400 text-sm font-medium mb-2">
+                    কুপন কোড (যদি থাকে)
+                 </label>
+                 <div className="flex gap-2">
+                    <div className="relative flex-1">
+                        <Tag className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                        <input 
+                            type="text" 
+                            placeholder="যেমন: DIGI20"
+                            value={couponCode}
+                            onChange={(e) => setCouponCode(e.target.value)}
+                            className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-blue-500 uppercase"
+                        />
+                    </div>
+                    <button 
+                        type="button"
+                        onClick={handleApplyCoupon}
+                        className="px-4 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded-lg transition-colors"
+                    >
+                        Apply
+                    </button>
+                 </div>
+                 {couponMessage && (
+                    <p className={`text-xs mt-2 flex items-center gap-1 ${couponMessage.type === 'success' ? 'text-green-400' : 'text-red-400'}`}>
+                        {couponMessage.type === 'success' ? <Check size={12} /> : <AlertTriangle size={12} />}
+                        {couponMessage.text}
+                    </p>
+                 )}
               </div>
 
               {/* Account Credentials Section */}
@@ -261,7 +336,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 </div>
 
                 <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700/50 mb-4 text-sm text-slate-300">
-                  সেন্ড মানি করুন: <span className="font-bold text-white select-all">{getPaymentNumber()}</span>
+                  সেন্ড মানি করুন (৳{total}): <span className="font-bold text-white select-all">{getPaymentNumber()}</span>
                 </div>
 
                 <div className="space-y-3">
@@ -303,7 +378,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 type="submit"
                 className="flex-[2] py-3 bg-green-600 hover:bg-green-500 text-white rounded-xl font-bold shadow-lg shadow-green-900/20 transition-all transform active:scale-95"
               >
-                অর্ডার সম্পন্ন করুন ৳{total.toLocaleString('bn-BD')}
+                অর্ডার নিশ্চিত করুন ৳{total.toLocaleString('bn-BD')}
               </button>
             </div>
           </form>

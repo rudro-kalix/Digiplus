@@ -22,3 +22,12 @@ export interface ChatMessage {
   role: 'user' | 'model';
   text: string;
 }
+
+export interface Order {
+  id: string;
+  date: string;
+  productName: string;
+  price: number;
+  status: 'Pending' | 'Completed';
+  trxId: string;
+}

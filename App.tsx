@@ -4,13 +4,15 @@ import { ProductCard } from './components/ProductCard';
 import { CheckoutModal } from './components/CheckoutModal';
 import { SupportBot } from './components/SupportBot';
 import { AboutModal } from './components/AboutModal';
+import { OrderHistoryModal } from './components/OrderHistoryModal';
 import { Product } from './types';
-import { Star, Zap, ShieldCheck, Info } from 'lucide-react';
+import { Star, Zap, ShieldCheck, Info, History } from 'lucide-react';
 
 const App: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   const handleBuyNow = (product: Product) => {
     setSelectedProduct(product);
@@ -38,7 +40,15 @@ const App: React.FC = () => {
           </div>
 
           {/* Navbar Links */}
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
+             <button 
+              onClick={() => setIsHistoryOpen(true)}
+              className="group relative inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-800/50 border border-slate-700 hover:border-purple-500/50 hover:bg-slate-800 text-slate-300 hover:text-white transition-all duration-300"
+            >
+              <History size={18} className="group-hover:text-purple-400 transition-colors" />
+              <span className="hidden sm:inline font-medium text-sm">অর্ডার হিস্টোরি</span>
+            </button>
+
             <button 
               onClick={() => setIsAboutOpen(true)}
               className="group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-800 border border-slate-700 hover:border-blue-500/50 hover:bg-slate-800/80 text-slate-300 hover:text-white transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-blue-900/20 active:scale-95"
@@ -152,6 +162,11 @@ const App: React.FC = () => {
       <AboutModal 
         isOpen={isAboutOpen}
         onClose={() => setIsAboutOpen(false)}
+      />
+
+      <OrderHistoryModal 
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
       />
 
       <SupportBot />
