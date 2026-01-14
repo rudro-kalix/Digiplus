@@ -72,7 +72,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       setCouponMessage({ type: 'success', text: `কুপন এপ্লাই করা হয়েছে! ৳${VALID_COUPONS[code]} ছাড়।` });
     } else {
       setDiscount(0);
-      setCouponMessage({ type: 'error', text: 'ভুল কুপন কোড।' });
+      setCouponMessage({ type: 'error', text: 'ভুল কুপন কোড। ' });
     }
   };
 
@@ -386,22 +386,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           </form>
         )}
 
-        {step === 'processing' && (
-          <div className="p-12 flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-300">
-            <Loader2 size={48} className="text-blue-500 animate-spin mb-4" />
-            <h3 className="text-xl font-semibold text-white mb-2">
-              অর্ডার তৈরি করা হচ্ছে
-            </h3>
-            <p className="text-slate-400">
-              অনুগ্রহ করে অপেক্ষা করুন...
-            </p>
-          </div>
-        )}
-
         {step === 'success' && (
           <div className="p-8 flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-300">
-            <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-6">
-              <CheckCircle2 size={32} className="text-green-500" />
+            <div className="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center mb-6">
+              <AlertTriangle size={32} className="text-yellow-500" />
             </div>
             {/* CHANGED HEADER HERE */}
             <h3 className="text-2xl font-bold text-white mb-2">
@@ -420,18 +408,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               href={generateWhatsAppLink()}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={handleCloseSuccess}
               className="w-full py-3.5 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-green-900/20 mb-3"
             >
               <MessageCircle size={20} />
               অর্ডার ডিটেইলস পাঠান (WhatsApp)
             </a>
             
-            <button
-              onClick={handleCloseSuccess}
-              className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-medium transition-all"
-            >
-              ঠিক আছে, বন্ধ করুন
-            </button>
+            {/* Removed the 'Close' button as requested */}
           </div>
         )}
       </div>
