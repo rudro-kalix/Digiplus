@@ -403,8 +403,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-6">
               <CheckCircle2 size={32} className="text-green-500" />
             </div>
+            {/* CHANGED HEADER HERE */}
             <h3 className="text-2xl font-bold text-white mb-2">
-              অর্ডার সম্পন্ন হয়েছে!
+              গুরুত্বপূর্ণ শেষ ধাপ
             </h3>
             <div className="bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-xl mb-6 w-full">
               <p className="text-yellow-200 text-sm font-semibold mb-1">
