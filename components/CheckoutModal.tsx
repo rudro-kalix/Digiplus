@@ -427,7 +427,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               অর্ডার ডিটেইলস পাঠান (WhatsApp)
             </a>
             
-            {/* Removed the 'Close' button as requested */}
+          
           </div>
         )}
       </div>
