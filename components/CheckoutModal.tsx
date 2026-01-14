@@ -127,7 +127,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
     setTimeout(() => {
       setStep('success');
-    }, 1500);
+    }, 2000);
   };
 
   const handleCloseSuccess = () => {
@@ -384,6 +384,18 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               </button>
             </div>
           </form>
+        )}
+
+        {step === 'processing' && (
+          <div className="p-12 flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-300">
+            <Loader2 size={48} className="text-blue-500 animate-spin mb-4" />
+            <h3 className="text-xl font-semibold text-white mb-2">
+              অর্ডার তৈরি করা হচ্ছে
+            </h3>
+            <p className="text-slate-400">
+              অনুগ্রহ করে অপেক্ষা করুন...
+            </p>
+          </div>
         )}
 
         {step === 'success' && (
