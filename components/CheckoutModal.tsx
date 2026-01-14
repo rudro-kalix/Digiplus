@@ -412,7 +412,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 ⚠️ খুব গুরুত্বপূর্ণ:
               </p>
               <p className="text-slate-300 text-xs">
-                দ্রুত ডেলিভারি পেতে নিচের বাটনে ক্লিক করে <strong>WhatsApp</strong>-এ আপনার অর্ডার ডিটেইলস পাঠিয়ে দিন। এটি পাঠালেই আপনার অর্ডার কনফার্ম হবে।
+               অর্ডার কনফার্ম করতে নিচের বাটনে ক্লিক করে <strong>WhatsApp</strong>-এ আপনার অর্ডার ডিটেইলস পাঠিয়ে দিন। এটি পাঠালেই আপনার অর্ডার কনফার্ম হবে।
               </p>
             </div>
             
