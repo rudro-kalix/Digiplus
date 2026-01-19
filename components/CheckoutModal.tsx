@@ -12,13 +12,25 @@ interface CheckoutModalProps {
 type PaymentMethod = 'bkash' | 'nagad' | 'rocket' | 'upay';
 type CheckoutStep = 'notice' | 'details' | 'processing' | 'success';
 
+// Coupon Definition
+type CouponDef = {
+  discount: number;
+  allowedProductIds?: string[]; // If undefined, valid for all products
+};
+
 // Mock Coupons
-// EDIT HERE: Add your secret coupon codes below
-const VALID_COUPONS: Record<string, number> = {
-  'DIGI20': 20,    // Flat 20 Taka off
-  'NEW50': 50,     // Flat 50 Taka off
-  'PRO10': 10,     // 10 Taka off
-  'RET155': 155 // Secret code example
+// UPDATED: Now supports product-specific coupons
+const VALID_COUPONS: Record<string, CouponDef> = {
+  // Global Coupons (Valid for all)
+  'DIGI20': { discount: 20 },
+  
+  // ChatGPT Plus Specific (ID: 'monthly-plus')
+  'PLUS50': { discount: 50, allowedProductIds: ['monthly-plus'] },
+  'CHAT30': { discount: 30, allowedProductIds: ['monthly-plus'] },
+
+  // ChatGPT GO Specific (ID: 'yearly-go')
+  'GO100': { discount: 100, allowedProductIds: ['yearly-go'] },
+  'YEARLY50': { discount: 50, allowedProductIds: ['yearly-go'] }
 };
 
 // OPTIONAL: EmailJS Config
@@ -66,10 +78,20 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const handleApplyCoupon = () => {
     if (!couponCode) return;
     const code = couponCode.toUpperCase().trim();
+    const coupon = VALID_COUPONS[code];
     
-    if (VALID_COUPONS[code]) {
-      setDiscount(VALID_COUPONS[code]);
-      setCouponMessage({ type: 'success', text: `কুপন এপ্লাই করা হয়েছে! ৳${VALID_COUPONS[code]} ছাড়।` });
+    if (coupon) {
+      // Check if product restriction exists
+      if (coupon.allowedProductIds && product) {
+        if (!coupon.allowedProductIds.includes(product.id)) {
+           setDiscount(0);
+           setCouponMessage({ type: 'error', text: 'এই কুপনটি এই প্রোডাক্টের জন্য প্রযোজ্য নয়।' });
+           return;
+        }
+      }
+
+      setDiscount(coupon.discount);
+      setCouponMessage({ type: 'success', text: `কুপন এপ্লাই করা হয়েছে! ৳${coupon.discount} ছাড়।` });
     } else {
       setDiscount(0);
       setCouponMessage({ type: 'error', text: 'ভুল কুপন কোড। ' });
