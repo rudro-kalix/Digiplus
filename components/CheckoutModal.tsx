@@ -18,7 +18,7 @@ const VALID_COUPONS: Record<string, number> = {
   'DIGI20': 20,    // Flat 20 Taka off
   'NEW50': 50,     // Flat 50 Taka off
   'PRO10': 10,     // 10 Taka off
-  'SECRET100': 100 // Secret code example
+  'RET155': 155 // Secret code example
 };
 
 // OPTIONAL: EmailJS Config
