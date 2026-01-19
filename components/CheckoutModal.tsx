@@ -29,7 +29,7 @@ const VALID_COUPONS: Record<string, CouponDef> = {
   'CHAT30': { discount: 30, allowedProductIds: ['monthly-plus'] },
 
   // ChatGPT GO Specific (ID: 'yearly-go')
-  'GO100': { discount: 100, allowedProductIds: ['yearly-go'] },
+  'RET155': { discount: 155, allowedProductIds: ['yearly-go'] },
   'YEARLY50': { discount: 50, allowedProductIds: ['yearly-go'] }
 };
 
