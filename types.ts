@@ -7,6 +7,7 @@ export interface Product {
   features: string[];
   image: string; // URL or emoji placeholder
   popular?: boolean;
+  available?: boolean;
 }
 
 export interface CartItem extends Product {

@@ -8,6 +8,7 @@ export const PRODUCTS: Product[] = [
     price: 195, // Adjusted for local context BDT
     duration: 'মেয়াদ ১ মাস',
     image: '⚡',
+    available: false, // Discontinued
     features: [
       'সম্পূর্ণ ব্যক্তিগত অ্যাকাউন্ট (Personal)',
       '✅দ্রুত রেসপন্স টাইম',
@@ -30,7 +31,8 @@ export const PRODUCTS: Product[] = [
     price: 295, // Adjusted for local context BDT
     duration: 'মেয়াদ ১ বছর',
     image: '🚀',
-    popular: true,
+    popular: false, // Removed popular tag as it is discontinued
+    available: false, // Discontinued
     features: [
       '১০০% ব্যক্তিগত অ্যাকাউন্ট (Personal)',
       '৮২০০ টাকা সাশ্রয়',
