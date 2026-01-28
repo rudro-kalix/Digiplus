@@ -21,7 +21,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onBuyNow }) =
       
       {!isAvailable && (
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 -rotate-12 border-4 border-red-500/50 bg-slate-900/90 px-6 py-2 rounded-xl backdrop-blur-sm">
-           <span className="text-red-500 text-xl font-bold uppercase tracking-widest whitespace-nowrap">স্টক আউট</span>
+           <span className="text-red-500 text-xl font-bold uppercase tracking-widest whitespace-nowrap">অফার শেষ</span>
         </div>
       )}
 
