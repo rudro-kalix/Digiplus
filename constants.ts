@@ -5,10 +5,10 @@ export const PRODUCTS: Product[] = [
     id: 'monthly-plus',
     name: 'চ্যাটজিপিটি প্লাস',
     description: 'স্বল্পমেয়াদী প্রজেক্ট এবং ব্যক্তিগত ব্যবহারের জন্য সেরা।',
-    price: 195, // Adjusted for local context BDT
+    price: 245, 
     duration: 'মেয়াদ ১ মাস',
     image: '⚡',
-    available: false, // Discontinued
+    available: true, 
     features: [
       'সম্পূর্ণ ব্যক্তিগত অ্যাকাউন্ট (Personal)',
       '✅দ্রুত রেসপন্স টাইম',
