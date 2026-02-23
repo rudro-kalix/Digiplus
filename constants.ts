@@ -15,7 +15,7 @@ export const PRODUCTS: Product[] = [
       '✅নতুন ফিচারে অগ্রাধিকার',
       '✅ Faster Response Speed',
       '✅ Priority Access (Rush Hour-এও দ্রুত চলবে)',
-      '✅ Access to Advanced Models (GPT-4o / GPT-5.1)',
+      '✅ Access to Advanced Models (GPT-5.2 / GPT-5.3)',
       '✅ Codex Agent Access',
       '✅ Improved Image Generation',
       '✅ Higher Message Limits',
