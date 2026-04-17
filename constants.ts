@@ -4,45 +4,34 @@ export const PRODUCTS: Product[] = [
   {
     id: 'monthly-plus',
     name: 'চ্যাটজিপিটি প্লাস',
-    description: 'স্বল্পমেয়াদী প্রজেক্ট এবং ব্যক্তিগত ব্যবহারের জন্য সেরা।',
-    price: 245, 
-    duration: 'মেয়াদ ১ মাস',
+    description: '১২ মাসের পার্সোনাল সাবস্ক্রিপশন, দীর্ঘমেয়াদী ব্যবহারের জন্য প্রিমিয়াম প্যাক।',
+    price: 4600,
+    duration: 'মেয়াদ ১২ মাস',
     image: '⚡',
-    available: true, 
+    available: true,
     features: [
-      'সম্পূর্ণ ব্যক্তিগত অ্যাকাউন্ট (Personal)',
-      '✅দ্রুত রেসপন্স টাইম',
-      '✅নতুন ফিচারে অগ্রাধিকার',
-      '✅ Faster Response Speed',
-      '✅ Priority Access (Rush Hour-এও দ্রুত চলবে)',
-      '✅ Access to Advanced Models (GPT-5.2 / GPT-5.3)',
-      '✅ Codex Agent Access',
-      '✅ Improved Image Generation',
-      '✅ Higher Message Limits',
-      '✅ More File Upload Capacity',
-      '✅ ইনস্ট্যান্ট এক্টিভেশন'
-
+      '🛡️ আপনার নিজের Personal Account এ দেওয়া হবে',
+      '⚡ এটি এককালীন পেমেন্ট, প্রতি মাসে রিনিউ করার ঝামেলা নেই',
+      '✅ ফুল ওয়ারেন্টি সহ',
+      '❌ এটি টিম ইনভাইটেশন বা workspace একাউন্ট নয়',
+      '✅ মেয়াদ শেষে হিস্টোরি থাকবে'
     ]
   },
   {
     id: 'yearly-go',
     name: 'ChatGPT GO',
-    description: 'দীর্ঘমেয়াদী ব্যবহারের জন্য সাশ্রয়ী সেরা প্যাকেজ।',
-    price: 295, // Adjusted for local context BDT
-    duration: 'মেয়াদ ১ বছর',
+    description: '১২ মাসের বাজেট-ফ্রেন্ডলি পার্সোনাল সাবস্ক্রিপশন।',
+    price: 1020,
+    duration: 'মেয়াদ ১২ মাস',
     image: '🚀',
-    popular: false, // Removed popular tag as it is discontinued
-    available: false, // Discontinued
+    popular: true,
+    available: true,
     features: [
-      '১০০% ব্যক্তিগত অ্যাকাউন্ট (Personal)',
-      '৮২০০ টাকা সাশ্রয়',
-      '✅ আর অনেক বেশী File Upload',
-      '✅ Fast Images Generation',
-      '✅ Unlimited Prompt',
-      '✅ Full Access GPT-5.1',
-      '✅ Voice Mode ',
-      '✅ ইনস্ট্যান্ট এক্টিভেশন'
-
+      '🛡️ আপনার নিজের Personal Account এ দেওয়া হবে',
+      '⚡ এটি এককালীন পেমেন্ট, প্রতি মাসে রিনিউ করার ঝামেলা নেই',
+      '✅ ফুল ওয়ারেন্টি সহ',
+      '❌ এটি টিম ইনভাইটেশন বা workspace একাউন্ট নয়',
+      '✅ মেয়াদ শেষে হিস্টোরি থাকবে'
     ]
   }
 ];
