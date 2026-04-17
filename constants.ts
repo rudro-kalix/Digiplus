@@ -4,7 +4,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 'monthly-plus',
     name: 'চ্যাটজিপিটি প্লাস',
-    description: '১২ মাসের পার্সোনাল সাবস্ক্রিপশন, দীর্ঘমেয়াদী ব্যবহারের জন্য প্রিমিয়াম প্যাক।',
+    description: '১২ মাসের পার্সোনাল সাবস্ক্রিপশন, দীর্ঘমেয়াদী ব্যবহারের জন্য প্রিমিয়াম কর্পোরেট প্যাক।',
     price: 4600,
     duration: 'মেয়াদ ১২ মাস',
     image: '⚡',
@@ -30,7 +30,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 'yearly-go',
     name: 'ChatGPT GO',
-    description: '১২ মাসের বাজেট-ফ্রেন্ডলি পার্সোনাল সাবস্ক্রিপশন।',
+    description: '১২ মাসের বাজেট-ফ্রেন্ডলি স্টুডেন্ট পার্সোনাল সাবস্ক্রিপশন।',
     price: 1195,
     duration: 'মেয়াদ ১২ মাস',
     image: '🚀',
