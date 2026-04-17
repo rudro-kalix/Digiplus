@@ -254,15 +254,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               নিরাপদ চেকআউট
             </h2>
 
-            <div className="mb-6 bg-amber-500/10 border border-amber-500/30 p-4 rounded-xl">
-              <p className="text-amber-300 text-sm font-semibold mb-2">Session নির্দেশনা:</p>
-              <ol className="text-amber-100/90 text-xs list-decimal pl-4 space-y-1 leading-relaxed">
-                <li>যে অ্যাকাউন্টে সাবস্ক্রিপশন নিতে চান, সেই অ্যাকাউন্টে ব্রাউজার থেকে লগইন করুন।</li>
-                <li>লগইন অবস্থায় <span className="select-all">https://chatgpt.com/api/auth/session</span> ওপেন করুন।</li>
-                <li>স্ক্রিনে যা দেখাবে সব Select All করে কপি করে নিচে প্রদান করুন।</li>
-              </ol>
-            </div>
-
             <div className="mb-6 space-y-4">
               <div className="bg-slate-800 p-4 rounded-xl border border-slate-700">
                 <div className="flex justify-between text-sm text-slate-400 mb-2">
