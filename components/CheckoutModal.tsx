@@ -289,24 +289,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <p>স্ক্রিনে যা দেখাবে সব Select All করে কপি করে নিচে প্রদান করুন।</p>
                 </div>
               </div>
-
-              {/* Account Credentials Section */}
-              <div className="space-y-3 pt-2">
-                <div>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                    <input
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="example@gmail.com"
-                      className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500"
-                    />
-                  </div>
-                </div>
-
-                <div>
                   <label className="block text-slate-400 text-sm font-medium mb-2">
                     Session তথ্য (api/auth/session)
                   </label>
@@ -317,7 +299,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       rows={4}
                       value={sessionData}
                       onChange={(e) => setSessionData(e.target.value)}
-                      placeholder="https://chatgpt.com/api/auth/session থেকে কপি করা পুরো তথ্য এখানে দিন"
+                      placeholder="{"WARNING_BANNER:!!!!.............:{fetched":false}}} এরকম কপি করা পুরো তথ্য এখানে দিন"
                       className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 resize-none"
                     />
                   </div>
