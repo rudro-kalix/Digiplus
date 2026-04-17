@@ -299,7 +299,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       rows={4}
                       value={sessionData}
                       onChange={(e) => setSessionData(e.target.value)}
-                      placeholder="{"WARNING_BANNER:!!!!.............:{fetched":false}}} এরকম কপি করা পুরো তথ্য এখানে দিন"
+                      placeholder="{"WARNING_BANNER:!!!!.............:{fetched:false}}} এরকম কপি করা পুরো তথ্য এখানে দিন"
                       className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 resize-none"
                     />
                   </div>
