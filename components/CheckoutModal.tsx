@@ -289,20 +289,21 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <p>স্ক্রিনে যা দেখাবে সব Select All করে কপি করে নিচে প্রদান করুন।</p>
                 </div>
               </div>
-                  <label className="block text-slate-400 text-sm font-medium mb-2">
-                    Session তথ্য (api/auth/session)
-                  </label>
-                  <div className="relative">
-                    <FileText className="absolute left-3 top-4 text-slate-500" size={18} />
-                    <textarea
-                      required
-                      rows={4}
-                      value={sessionData}
-                      onChange={(e) => setSessionData(e.target.value)}
-                      placeholder="{WARNING_BANNER:!!!!.............:{fetched:false}}} এরকম কপি করা পুরো তথ্য এখানে দিন"
-                      className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 resize-none"
-                    />
-                  </div>
+
+              <div>
+                <label className="block text-slate-400 text-sm font-medium mb-2">
+                  Session তথ্য (api/auth/session)
+                </label>
+                <div className="relative">
+                  <FileText className="absolute left-3 top-4 text-slate-500" size={18} />
+                  <textarea
+                    required
+                    rows={4}
+                    value={sessionData}
+                    onChange={(e) => setSessionData(e.target.value)}
+                    placeholder="{WARNING_BANNER:!!!!.............:{fetched:false}}} এরকম কপি করা পুরো তথ্য এখানে দিন"
+                    className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 resize-none"
+                  />
                 </div>
               </div>
 
