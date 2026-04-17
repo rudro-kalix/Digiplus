@@ -290,17 +290,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 </div>
 
                 <div>
-                  <div className="flex flex-wrap items-center gap-1.5 text-slate-400 text-sm font-medium mb-2">
-                    <span>Session তথ্য:</span>
-                    <a
-                      href="https://chatgpt.com/api/auth/session"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-400 hover:text-blue-300 underline underline-offset-2 break-all"
-                    >
-                      https://chatgpt.com/api/auth/session
-                    </a>
-                  </div>
+                  <label className="block text-slate-400 text-sm font-medium mb-2">
+                    Session তথ্য (api/auth/session)
+                  </label>
                   <div className="relative">
                     <FileText className="absolute left-3 top-4 text-slate-500" size={18} />
                     <textarea
