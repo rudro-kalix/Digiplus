@@ -270,12 +270,29 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 </div>
               </div>
 
+              <div className="bg-amber-500/10 border border-amber-500/30 p-4 rounded-xl">
+                <p className="text-amber-300 text-sm font-semibold mb-2">Session নির্দেশনা:</p>
+                <div className="text-amber-100/90 text-xs space-y-1 leading-relaxed">
+                  <p>যে অ্যাকাউন্টে সাবস্ক্রিপশন নিতে চান, সেই অ্যাকাউন্টে ব্রাউজার থেকে লগইন করুন।</p>
+                  <p>
+                    লগইন অবস্থায়{' '}
+                    <a
+                      href="https://chatgpt.com/api/auth/session"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:text-amber-200 break-all"
+                    >
+                      https://chatgpt.com/api/auth/session
+                    </a>{' '}
+                    ওপেন করুন।
+                  </p>
+                  <p>স্ক্রিনে যা দেখাবে সব Select All করে কপি করে নিচে প্রদান করুন।</p>
+                </div>
+              </div>
+
               {/* Account Credentials Section */}
               <div className="space-y-3 pt-2">
                 <div>
-                  <label className="block text-slate-400 text-sm font-medium mb-2">
-                    আপনার জিমেইল (Gmail)
-                  </label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                     <input
