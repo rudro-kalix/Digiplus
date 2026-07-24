@@ -4,8 +4,9 @@ import { ProductCard } from './components/ProductCard';
 import { CheckoutModal } from './components/CheckoutModal';
 import { AboutModal } from './components/AboutModal';
 import { OrderHistoryModal } from './components/OrderHistoryModal';
+import { SupportBot } from './components/SupportBot';
 import { Product } from './types';
-import { Star, Zap, ShieldCheck, Info, History } from 'lucide-react';
+import { Star, Zap, ShieldCheck, Info, History, WandSparkles } from 'lucide-react';
 
 const App: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -14,6 +15,11 @@ const App: React.FC = () => {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   const handleBuyNow = (product: Product) => {
+    if (product.purchaseUrl) {
+      window.location.assign(product.purchaseUrl);
+      return;
+    }
+
     setSelectedProduct(product);
     setIsCheckoutOpen(true);
   };
@@ -29,13 +35,10 @@ const App: React.FC = () => {
       <nav className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {/* Logo Image - Replace src with your own logo URL */}
-            <img 
-              src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEheZev5YSTOyU2yi6SGj8lDqhLjc1fd8Rg5Uj4WQyf3VzGLV0flHrNIW0E6Rl3sHXGdAuJsqZSXL86N8PsKaiYacp6WRWOBKFXu0n9vtxKSWdUPtyXGnhYiwj2zkbDwceAk53wsnjvUnFNnNOhgOXb9OOsYvpnaJ6cqwGFuc0Bf9567S_aRQj6gG4uCQwxf/s320/photo_2025-12-11_21-45-07.jpg" 
-              alt="DigiPlus Logo" 
-              className="w-10 h-10 rounded-lg shadow-lg shadow-blue-500/20 object-cover"
-            />
-            <span className="text-xl font-bold text-white tracking-tight">DigiPlus</span>
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-indigo-600 shadow-lg shadow-blue-500/20 flex items-center justify-center">
+              <WandSparkles size={22} className="text-white" aria-hidden="true" />
+            </div>
+            <span className="text-xl font-bold text-white tracking-tight">ToolzAI BD</span>
           </div>
 
           {/* Navbar Links */}
@@ -90,7 +93,7 @@ const App: React.FC = () => {
             </div>
 
             {/* Product Grid */}
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8 max-w-6xl mx-auto">
               {PRODUCTS.map(product => (
                 <ProductCard 
                   key={product.id} 
@@ -135,7 +138,7 @@ const App: React.FC = () => {
 
       <footer className="bg-slate-950 py-12 border-t border-slate-900">
         <div className="max-w-7xl mx-auto px-4 text-center text-slate-500">
-          <p className="mb-4">&copy; ২০২৫ DigiPlus। সর্বস্বত্ব সংরক্ষিত।</p>
+          <p className="mb-4">&copy; ২০২৬ ToolzAI BD। সর্বস্বত্ব সংরক্ষিত।</p>
           <div className="flex justify-center gap-6 text-sm">
             <a href="#" className="hover:text-white transition-colors">প্রাইভেসি পলিসি</a>
             <a href="#" className="hover:text-white transition-colors">টার্মস অফ সার্ভিস</a>
@@ -167,6 +170,8 @@ const App: React.FC = () => {
         isOpen={isHistoryOpen}
         onClose={() => setIsHistoryOpen(false)}
       />
+
+      <SupportBot />
     </div>
   );
 };

@@ -6,6 +6,8 @@ export interface Product {
   duration: string;
   features: string[];
   image: string; // URL or emoji placeholder
+  badge?: string;
+  purchaseUrl?: string;
   popular?: boolean;
   available?: boolean;
 }
@@ -22,6 +24,8 @@ export interface OrderDetails {
 export interface ChatMessage {
   role: 'user' | 'model';
   text: string;
+  actionLabel?: string;
+  actionUrl?: string;
 }
 
 export interface Order {

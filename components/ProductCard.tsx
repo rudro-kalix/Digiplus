@@ -10,6 +10,11 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onBuyNow }) => {
   const isYearly = product.duration.includes('বছর') || product.id.includes('year');
   const isAvailable = product.available !== false; // Default to true if undefined
+  const purchaseButtonClass = `w-full py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-200 ${
+    isAvailable
+      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-900/20 hover:shadow-blue-900/40 hover:-translate-y-0.5 active:translate-y-0'
+      : 'bg-slate-700 text-slate-400 cursor-not-allowed border border-slate-600'
+  }`;
 
   return (
     <div className={`relative bg-slate-800 rounded-2xl p-6 border ${product.popular ? 'border-blue-500 shadow-blue-500/10' : 'border-slate-700'} shadow-xl hover:transform hover:-translate-y-1 transition-all duration-300 flex flex-col ${!isAvailable ? 'opacity-75 grayscale-[0.5]' : ''}`}>
@@ -46,7 +51,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onBuyNow }) =
         {/* Highlight Personal Account */}
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold mb-4 border border-indigo-500/30">
             <User size={12} />
-            ব্যক্তিগত অ্যাকাউন্ট
+            {product.badge || 'ব্যক্তিগত অ্যাকাউন্ট'}
         </div>
 
         <div className="flex justify-center items-baseline gap-1">
@@ -63,27 +68,30 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onBuyNow }) =
         ))}
       </ul>
 
-      <button
-        onClick={() => isAvailable && onBuyNow(product)}
-        disabled={!isAvailable}
-        className={`w-full py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-200 ${
-            isAvailable 
-            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-900/20 hover:shadow-blue-900/40 hover:-translate-y-0.5 active:translate-y-0' 
-            : 'bg-slate-700 text-slate-400 cursor-not-allowed border border-slate-600'
-        }`}
-      >
-        {isAvailable ? (
+      {product.purchaseUrl && isAvailable ? (
+        <a href={product.purchaseUrl} className={purchaseButtonClass}>
+          <Zap size={18} />
+          Telegram-এ কিনুন
+        </a>
+      ) : (
+        <button
+          onClick={() => isAvailable && onBuyNow(product)}
+          disabled={!isAvailable}
+          className={purchaseButtonClass}
+        >
+          {isAvailable ? (
             <>
-                <Zap size={18} />
-                Buy Now
+              <Zap size={18} />
+              Buy Now
             </>
-        ) : (
+          ) : (
             <>
-                <Ban size={18} />
-                বর্তমানে নেই
+              <Ban size={18} />
+              বর্তমানে নেই
             </>
-        )}
-      </button>
+          )}
+        </button>
+      )}
     </div>
   );
 };

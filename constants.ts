@@ -2,6 +2,24 @@ import { Product } from './types';
 
 export const PRODUCTS: Product[] = [
   {
+    id: 'google-ai-pro-jio',
+    name: 'Google AI Pro — Jio SIM Offer',
+    description: 'Jio SIM ব্যবহারকারীদের জন্য Google AI Pro-এর বিশেষ অফার। অর্ডার করতে সরাসরি আমাদের Telegram bot-এ যান।',
+    price: 350,
+    duration: 'Jio SIM অফার',
+    image: '✨',
+    badge: 'Google AI Pro',
+    purchaseUrl: 'https://telegram.me/toolzai_bot',
+    popular: true,
+    available: true,
+    features: [
+      '✅ Google AI Pro বিশেষ অফার',
+      '✅ Jio SIM ব্যবহারকারীদের জন্য',
+      '✅ মূল্য মাত্র ৳৩৫০',
+      '✅ Telegram bot-এর মাধ্যমে অর্ডার'
+    ]
+  },
+  {
     id: 'monthly-plus',
     name: 'চ্যাটজিপিটি প্লাস',
     description: '১২ মাসের পার্সোনাল সাবস্ক্রিপশন, দীর্ঘমেয়াদী ব্যবহারের জন্য প্রিমিয়াম কর্পোরেট প্যাক।',
@@ -34,7 +52,6 @@ export const PRODUCTS: Product[] = [
     price: 1195,
     duration: 'মেয়াদ ১২ মাস',
     image: '🚀',
-    popular: true,
     available: true,
     features: [
       '🛡️ আপনার নিজের Personal Account এ দেওয়া হবে',

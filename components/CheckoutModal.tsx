@@ -22,7 +22,7 @@ type CouponDef = {
 // UPDATED: Now supports product-specific coupons
 const VALID_COUPONS: Record<string, CouponDef> = {
   // Global Coupons (Valid for all)
-  'DIGI20': { discount: 20 },
+  'TOOLZ20': { discount: 20 },
   
   // ChatGPT Plus Specific (ID: 'monthly-plus')
   'PLUS50': { discount: 50, allowedProductIds: ['monthly-plus'] },
@@ -112,10 +112,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         trxId: trxId
     };
 
-    const existingHistory = localStorage.getItem('digisub_orders');
+    const existingHistory = localStorage.getItem('toolzai_orders') || localStorage.getItem('digisub_orders');
     const history = existingHistory ? JSON.parse(existingHistory) : [];
     history.push(newOrder);
-    localStorage.setItem('digisub_orders', JSON.stringify(history));
+    localStorage.setItem('toolzai_orders', JSON.stringify(history));
 
 
     // 2. Try to send via EmailJS (if configured)
@@ -165,7 +165,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
   const generateWhatsAppLink = () => {
     const text = `
-*নতুন অর্ডার* (DigiPlus)
+*নতুন অর্ডার* (ToolzAI BD)
 ------------------
 📦 *Product:* ${product?.name}
 💰 *Total:* ${total} BDT ${discount > 0 ? `(Discount: ${discount})` : ''}

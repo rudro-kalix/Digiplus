@@ -12,7 +12,7 @@ export const OrderHistoryModal: React.FC<OrderHistoryModalProps> = ({ isOpen, on
 
   useEffect(() => {
     if (isOpen) {
-      const storedOrders = localStorage.getItem('digisub_orders');
+      const storedOrders = localStorage.getItem('toolzai_orders') || localStorage.getItem('digisub_orders');
       if (storedOrders) {
         setOrders(JSON.parse(storedOrders).reverse()); // Newest first
       }
@@ -21,6 +21,7 @@ export const OrderHistoryModal: React.FC<OrderHistoryModalProps> = ({ isOpen, on
 
   const clearHistory = () => {
     if(confirm('আপনি কি নিশ্চিত যে আপনি সম্পূর্ণ ইতিহাস মুছে ফেলতে চান?')) {
+        localStorage.removeItem('toolzai_orders');
         localStorage.removeItem('digisub_orders');
         setOrders([]);
     }

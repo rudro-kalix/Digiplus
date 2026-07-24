@@ -6,7 +6,12 @@ import { MessageCircle, X, Send, Loader2 } from 'lucide-react';
 export const SupportBot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'model', text: 'হ্যালো! চ্যাটজিপিটি সাবস্ক্রিপশন নিয়ে কোনো প্রশ্ন থাকলে আমাকে করতে পারেন।' }
+    {
+      role: 'model',
+      text: 'ToolzAI BD-তে স্বাগতম! Google AI Pro Jio SIM অফার এখন মাত্র ৳৩৫০।',
+      actionLabel: 'Telegram-এ ৳৩৫০ দিয়ে কিনুন',
+      actionUrl: 'https://telegram.me/toolzai_bot'
+    }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -23,33 +28,60 @@ export const SupportBot: React.FC = () => {
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
-    if (!process.env.API_KEY) {
+    const userMessage = input.trim();
+    setInput('');
+    setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
+
+    const normalizedMessage = userMessage.toLowerCase();
+    const isJioOfferQuestion = [
+      'google ai',
+      'google pro',
+      'jio',
+      'জিও',
+      '৩৫০',
+      '350'
+    ].some(keyword => normalizedMessage.includes(keyword));
+
+    if (isJioOfferQuestion) {
       setMessages(prev => [
         ...prev,
         {
           role: 'model',
-          text: 'দুঃখিত, বট চালু করা যায়নি। সার্ভার অ্যাডমিনকে API_KEY সেট করতে বলুন।'
+          text: 'Google AI Pro Jio SIM অফারটি ৳৩৫০। কিনতে নিচের বাটনে ক্লিক করে ToolzAI BD Telegram bot-এ যান।',
+          actionLabel: 'Telegram-এ কিনুন',
+          actionUrl: 'https://telegram.me/toolzai_bot'
         }
       ]);
       return;
     }
 
-    const userMessage = input.trim();
-    setInput('');
-    setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
+    if (!process.env.API_KEY) {
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'model',
+          text: 'সাধারণ সাপোর্ট সাময়িকভাবে বন্ধ আছে। Google AI Pro Jio SIM অফারটি ৳৩৫০-এ কিনতে নিচের বাটনে ক্লিক করুন।',
+          actionLabel: 'Telegram-এ কিনুন',
+          actionUrl: 'https://telegram.me/toolzai_bot'
+        }
+      ]);
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const systemInstruction = `
-        You are a friendly and professional customer support agent for "DigiSub", a digital store selling ChatGPT subscriptions in Bangladesh.
+        You are a friendly and professional customer support agent for "ToolzAI BD", a digital store selling AI subscriptions in Bangladesh.
         
         IMPORTANT: Reply in Bengali (Bangla) only.
 
         Product Status:
         - ChatGPT Plus (12 months) price: 4600 BDT.
-        - ChatGPT Go (12 months) price: 1020 BDT.
-        - Both are personal subscriptions and currently available.
+        - ChatGPT Go (12 months) price: 1195 BDT.
+        - Google AI Pro Jio SIM offer price: 350 BDT. It must be purchased from https://telegram.me/toolzai_bot.
+        - All products are currently available.
 
         Store Policies:
         - Delivery time: 10-30 minutes after payment.
@@ -91,7 +123,11 @@ export const SupportBot: React.FC = () => {
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
               সাপোর্ট অ্যাসিস্ট্যান্ট
             </h3>
-            <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-white">
+            <button
+              onClick={() => setIsOpen(false)}
+              aria-label="চ্যাট উইন্ডো বন্ধ করুন"
+              className="text-slate-400 hover:text-white"
+            >
               <X size={18} />
             </button>
           </div>
@@ -105,6 +141,16 @@ export const SupportBot: React.FC = () => {
                     : 'bg-slate-700 text-slate-200 rounded-bl-none'
                 }`}>
                   {msg.text}
+                  {msg.actionUrl && (
+                    <a
+                      href={msg.actionUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 flex w-full items-center justify-center rounded-lg bg-sky-500 px-3 py-2 font-semibold text-white transition-colors hover:bg-sky-400"
+                    >
+                      {msg.actionLabel || 'Telegram-এ কিনুন'}
+                    </a>
+                  )}
                 </div>
               </div>
             ))}
@@ -133,6 +179,7 @@ export const SupportBot: React.FC = () => {
               <button 
                 onClick={handleSend}
                 disabled={isLoading}
+                aria-label="মেসেজ পাঠান"
                 className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-colors disabled:opacity-50"
               >
                 {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
@@ -145,6 +192,7 @@ export const SupportBot: React.FC = () => {
       {/* Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-label={isOpen ? 'সাপোর্ট চ্যাট বন্ধ করুন' : 'সাপোর্ট চ্যাট খুলুন'}
         className="bg-blue-600 hover:bg-blue-500 text-white p-4 rounded-full shadow-lg hover:shadow-blue-500/20 transition-all duration-300 flex items-center justify-center group"
       >
         {isOpen ? <X size={24} /> : <MessageCircle size={24} className="group-hover:scale-110 transition-transform" />}
